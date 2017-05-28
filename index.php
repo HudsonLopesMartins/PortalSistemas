@@ -24,6 +24,11 @@
             echo $cHead["js"]["maplace"];
             //echo $cHead["js"]["leaflet"];
         ?>
+        <script>
+            $(function() {
+                $("#aLogout").hide();
+            });
+        </script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -53,6 +58,7 @@
                                 <li><a href="#"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> &nbsp;&nbsp;Logar-se como Administrador</a></li>
                             </ul>
                         </li>
+                        <li><a href="#" id="aLogout">Efetuar Logout</a></li>
                     </ul>
                 </div>
             </div>
