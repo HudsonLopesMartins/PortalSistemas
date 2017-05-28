@@ -113,6 +113,7 @@ $(function() {
                         $.get('./principal.php', function(rs){
                             $("#aEmp").text("Empresa: " + sEmp);
                             $("#aUser").text("Usuário Logado: " + sUser);
+                            $("#aLogout").show();
                             $('#app').html(rs);
                         })
                         .fail(function(){
@@ -147,6 +148,18 @@ $(function() {
         })
         .fail(function(){
             alert('Erro ao abrir formulário');
+        });
+    });
+    
+    $("#aLogout").click(function(){
+        $.post("./include/TJson.class.php", ({className: "TSession", methodName: "closeSession"}),
+        function(){
+            $("#aLogout").hide();
+            //window.open("./login.php", "_self");
+        })
+        .fail(function(){
+            $("#aLogout").hide();
+            alert("ERRO!\nFalha ao finalizar a sessão.");
         });
     });
 });
