@@ -241,7 +241,7 @@ class TFormCadastroEmpresa extends TPage implements iFormsPage{
         $areaPrincipal->addItem($areaCad);
         $areaPrincipal->addItem($areaMapa);
         
-        $this->addItem("<br><br><br>");
+        //$this->addItem("<br><br><br>");
         $this->addItem($areaPrincipal->show());
         //$this->addItem($tabForms->show());
     }

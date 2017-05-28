@@ -90,7 +90,7 @@ class TFormPeriodoAssinatura extends TPage implements iPage{
         $areaPrincipal = new TBootstrapGrid();
         $areaPrincipal->addItem($areaCad);
         
-        $this->addItem("<br><br><br>");
+        //$this->addItem("<br><br><br>");
         $this->addItem($areaPrincipal->show());
 
     }

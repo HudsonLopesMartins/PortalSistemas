@@ -103,7 +103,7 @@ class TFormLogin implements iFormLogin {
         $areaLogin->setPos("col-md-offset-4");
         $areaLogin->addItem($panelPrincipal);
         $areaLogin->addItem($panelEmpresa);
-        $areaLogin->style = "position:absolute; top:100px";
+        //$areaLogin->style = "position:absolute; top:100px";
 
         $areaPrincipal->addItem($areaLogin);
         echo $areaPrincipal->show();
