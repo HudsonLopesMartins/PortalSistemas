@@ -24,9 +24,12 @@
             echo $cHead["js"]["maplace"];
             //echo $cHead["js"]["leaflet"];
         ?>
+        <link href="libs/css/index.css" rel="stylesheet">
         <script>
             $(function() {
-                $("#aLogout").hide();
+                $("#aLogoff").hide();
+                $("#aEmp").hide();
+                $("#aUser").hide();
             });
         </script>
     </head>
@@ -58,7 +61,7 @@
                                 <li><a href="#"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> &nbsp;&nbsp;Logar-se como Administrador</a></li>
                             </ul>
                         </li>
-                        <li><a href="#" id="aLogout">Efetuar Logout</a></li>
+                        <li><a href="#" id="aLogoff">Efetuar Logoff</a></li>
                     </ul>
                 </div>
             </div>

@@ -3,7 +3,7 @@
     include_once './include/config.inc.php';
     include_once './libs/app.widgets/bs/TBootstrapAlerts.class.php';
 
-    echo "<br><br><br><br>";
+    //echo "<br><br><br><br>";
     
     session_start();
     //$_SESSION["status"] = "on";

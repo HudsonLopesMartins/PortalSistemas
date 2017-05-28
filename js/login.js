@@ -113,7 +113,9 @@ $(function() {
                         $.get('./principal.php', function(rs){
                             $("#aEmp").text("Empresa: " + sEmp);
                             $("#aUser").text("Usuário Logado: " + sUser);
-                            $("#aLogout").show();
+                            $("#aLogoff").show();
+                            $("#aEmp").show();
+                            $("#aUser").show();
                             $('#app').html(rs);
                         })
                         .fail(function(){
@@ -151,15 +153,21 @@ $(function() {
         });
     });
     
-    $("#aLogout").click(function(){
+    $("#aLogoff").click(function(){
         $.post("./include/TJson.class.php", ({className: "TSession", methodName: "closeSession"}),
         function(){
-            $("#aLogout").hide();
-            alert("Logoff efetuado com Sucesso.");
+            $("#aLogoff").hide();
+            $("#aEmp").hide();
+            $("#aUser").hide();
+            
+            $('#app').html("<div class='alert alert-success' role='alert'><strong>Ok</strong>&nbsp;Logoff efetuado com sucesso.</div>");
+            //alert("Logoff efetuado com Sucesso.");
             //window.open("./login.php", "_self");
         })
         .fail(function(){
-            $("#aLogout").hide();
+            $("#aLogoff").hide();
+            $("#aEmp").hide();
+            $("#aUser").hide();
             alert("ERRO!\nFalha ao finalizar a sessão.");
         });
     });

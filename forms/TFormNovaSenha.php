@@ -81,7 +81,7 @@ class TFormNovaSenha implements iFormNovaSenha {
         $areaNovaSenha->setWidth("col-md-4");
         $areaNovaSenha->setPos("col-md-offset-4");
         $areaNovaSenha->addItem($panelPrincipal);
-        $areaNovaSenha->style = "position:absolute; top:100px";
+        //$areaNovaSenha->style = "position:absolute; top:100px";
 
         $areaPrincipal->addItem($areaNovaSenha);
         echo $areaPrincipal->show();

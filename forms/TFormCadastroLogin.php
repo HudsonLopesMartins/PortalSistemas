@@ -69,7 +69,7 @@ class TFormCadastroLogin extends TPage implements iFormsPage{
         $areaCadLogin->setWidth("col-md-6 col-md-offset-3");
         $areaCadLogin->addItem($panelLogin);
         
-        $this->addItem("<br><br><br>");
+        //$this->addItem("<br><br><br>");
         $this->addItem($areaCadLogin->show());
     }
 }
