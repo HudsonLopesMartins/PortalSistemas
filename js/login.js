@@ -155,6 +155,7 @@ $(function() {
         $.post("./include/TJson.class.php", ({className: "TSession", methodName: "closeSession"}),
         function(){
             $("#aLogout").hide();
+            alert("Logoff efetuado com Sucesso.");
             //window.open("./login.php", "_self");
         })
         .fail(function(){
