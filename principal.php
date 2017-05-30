@@ -2,18 +2,19 @@
 <?php
     include_once './include/config.inc.php';
     include_once './libs/app.widgets/bs/TBootstrapAlerts.class.php';
-
-    //echo "<br><br><br><br>";
     
     session_start();
     //$_SESSION["status"] = "on";
     if (!isset($_SESSION["status"])){
         //unset($_SESSION["status"]);
         //header("location:index.php");
-        echo TBootStrapAlerts::show("Não foi possível efetuar o login", "alert", "Erro!");
+        echo "<div class='row'><div class='col-md-6 col-md-offset-3'>" . 
+             TBootStrapAlerts::show("<p><strong>Falha!</strong>&nbsp;Não foi possível efetuar o login</p>", "warning", "<h4>Erro</h4>") .
+             "</div></div>";
     }
     else {
-        echo TBootStrapAlerts::show("Usuário logado com sucesso", "success", "Ok!");
-        //header("location:principal.php");
+        echo "<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" . 
+             TBootStrapAlerts::show("<p><strong>Ok!</strong>&nbsp;Preferências carregadas com sucesso.</p>", "success", "<h4>Sucesso</h4>") .
+             "</div></div>";
     }
 ?>

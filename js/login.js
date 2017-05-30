@@ -110,16 +110,28 @@ $(function() {
                                          lng:        rs.r[0].lng
                                        }];
                         $.post("./include/TJson.class.php", ({className: "TSession", methodName: "setSValue", params: sSession}));
-                        $.get('./principal.php', function(rs){
-                            $("#aEmp").text("Empresa: " + sEmp);
-                            $("#aUser").text("Usuário Logado: " + sUser);
-                            $("#aLogoff").show();
-                            $("#aEmp").show();
-                            $("#aUser").show();
-                            $('#app').html(rs);
-                        })
-                        .fail(function(){
-                            alert('Erro ao abrir formulário');
+                        var messageWait = function(){
+                            $('#app').html("<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" + 
+                                           "<div class='alert alert-info' role='alert'>" + 
+                                           "<h4>Informação</h4>" +
+                                           "<p><strong>Aguarde...</strong>&nbsp;Carregando preferências do usuário</div></p>" +
+                                           "</div></div>");
+                            return $("#app").fadeIn(4000).delay(4000).fadeOut();
+                        };
+                        $.when(messageWait()).done(function(){
+                            $.get('./principal.php', function(rs){
+                                $("#app").show();
+                                $("#aEmp").text("Empresa: " + sEmp);
+                                $("#aUser").text("Usuário Logado: " + sUser);
+                                $("#aLogoff").show();
+                                $("#aEmp").show();
+                                $("#aUser").show();
+
+                                $('#app').html(rs);
+                            })
+                            .fail(function(){
+                                alert('Erro ao abrir formulário');
+                            });
                         });
                     }
                 }, "json")
@@ -160,7 +172,12 @@ $(function() {
             $("#aEmp").hide();
             $("#aUser").hide();
             
-            $('#app').html("<div class='alert alert-success' role='alert'><strong>Ok</strong>&nbsp;Logoff efetuado com sucesso.</div>");
+            $('#app').html("<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" + 
+                           "<div class='alert alert-success ' role='alert'>" + 
+                           "<h4>Sucesso</h4>" +
+                           "<p><strong>Ok!</strong>&nbsp;Logoff efetuado com sucesso. " + 
+                           "<a href='./' class='alert-link'>Clique para retornar ao login.</a></p>" + 
+                           "</div></div></div>");
             //alert("Logoff efetuado com Sucesso.");
             //window.open("./login.php", "_self");
         })
