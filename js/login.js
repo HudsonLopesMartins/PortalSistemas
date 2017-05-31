@@ -113,8 +113,8 @@ $(function() {
                         var messageWait = function(){
                             $('#app').html("<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" + 
                                            "<div class='alert alert-info' role='alert'>" + 
-                                           "<h4>Informação</h4>" +
-                                           "<p><strong>Aguarde...</strong>&nbsp;Carregando preferências do usuário</div></p>" +
+                                           "<h4>Aguarde...</h4>" +
+                                           "<p><strong>Iniciando</strong>&nbsp; o carregando das preferências do usuário</div></p>" +
                                            "</div></div>");
                             return $("#app").fadeIn(4000).delay(4000).fadeOut();
                         };
@@ -174,7 +174,7 @@ $(function() {
             
             $('#app').html("<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" + 
                            "<div class='alert alert-success ' role='alert'>" + 
-                           "<h4>Sucesso</h4>" +
+                           "<h4>Logoff Concluido</h4>" +
                            "<p><strong>Ok!</strong>&nbsp;Logoff efetuado com sucesso. " + 
                            "<a href='./' class='alert-link'>Clique para retornar ao login.</a></p>" + 
                            "</div></div></div>");
