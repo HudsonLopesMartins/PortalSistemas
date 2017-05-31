@@ -12,6 +12,7 @@ interface iSistemas {
     public function exists($dados);
     public function find($dados, $toJson = true);
     public function findAll($toJson = true);
+    public function findAppByEmp($dados, $toJson = true);
 }
 
 class Sistemas implements iSistemas {
@@ -24,7 +25,17 @@ class Sistemas implements iSistemas {
                                            s.valorassinatura,
                                            s.versao
                                          from sistemas s
-                                         order by s.id");
+                                         order by s.id",
+                             "findAppByEmp"=>"select
+                                                se.id,
+                                                se.id_empresa,
+                                                se.id_sistema,
+                                                e.nomefantasia, 
+                                                s.nome as sistema
+                                              from sistemas_empresa se, empresa e, sistemas s
+                                              where e.id = se.id_empresa
+                                                and s.id = se.id_sistema
+                                                and se.id_empresa = ?");
     
     public function __construct() {
         $this->dbconn = ADONewConnection(DRV_MYSQL);
@@ -119,5 +130,33 @@ class Sistemas implements iSistemas {
         }
         
         $dsSistemas->Close();
+    }
+    
+    public function findAppByEmp($dados, $toJson = true) {
+        $SQL   = (object) $this->SQLText;
+        $rJson = (bool) $toJson;
+        $dsApp = $this->dbconn->Execute($SQL->findAppByEmp, array($dados["d"]["empresa"][0]["id"]));
+        
+        if ($rJson){
+            header("Content-type: application/json;charset=utf-8");
+            if ($dsApp->RecordCount() > 0){
+                echo TGetJSON::getJSONData("r", $dsApp->GetArray());
+            }
+            else {
+                $message = array("COD"=>"201", "MSG"=> htmlspecialchars($GLOBALS['message'][201]));
+                echo TGetJSON::getJSON("r", $message);
+            }
+        }
+        else {
+            if ($dsApp->RecordCount() > 0){
+                $message = array("r" => $dsApp->GetArray());
+                return $message;
+            }
+            else {
+                $message = array("r" => array("COD"=>"201", "MSG"=> htmlspecialchars($GLOBALS['message'][201])));
+                return $message;
+            }
+        }
+        $dsApp->Close();
     }
 }
