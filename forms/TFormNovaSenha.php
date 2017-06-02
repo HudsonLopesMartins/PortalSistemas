@@ -11,6 +11,7 @@ include_once '../libs/app.widgets/bs/TBootstrapForm.class.php';
 
 interface iFormNovaSenha {
     public function addFileJS($file);
+    public function addFileCSS($file);
     public function addJS($script);
     public function open();
 }
@@ -23,6 +24,7 @@ interface iFormNovaSenha {
 class TFormNovaSenha implements iFormNovaSenha {
     private $dirFileJS = null;
     private $scriptJS  = null;
+    private $fCS       = null;
     
     public function __construct() {
 
@@ -36,7 +38,17 @@ class TFormNovaSenha implements iFormNovaSenha {
         $this->dirFileJS[] = "<script src='{$file}' type='text/javascript'></script>";
     }
     
+    public function addFileCSS($file) {
+            $this->fCS[] = "<link href='{$file}' rel='stylesheet'>";
+    }
+    
     public function open() {
+        if ($this->fCS){
+            foreach ($this->fCS as $key => $value) {
+                echo $value;
+            }
+        }
+        
         if ($this->dirFileJS){
             foreach ($this->dirFileJS as $key => $value) {
                 echo $value;

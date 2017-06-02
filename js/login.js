@@ -188,4 +188,13 @@ $(function() {
             alert("ERRO!\nFalha ao finalizar a sessão.");
         });
     });
+    
+    $('#lnkListaUsuarios').click(function(){
+        $.get('./view/usuarios.php', function(rs){
+            $('#app').html(rs);
+        })
+        .fail(function(){
+            alert('Erro ao abrir formulário');
+        });
+    });
 });
