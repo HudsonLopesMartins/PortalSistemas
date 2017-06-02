@@ -53,7 +53,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Gerenciamento <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> &nbsp;&nbsp;Usuários</a></li>
+                                <li><a href="#" id="lnkListaUsuarios"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> &nbsp;&nbsp;Usuários</a></li>
                                 <li><a href="#"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> &nbsp;&nbsp;Grupo de Ususários</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> &nbsp;&nbsp;Dados Cadastrais</a></li>
