@@ -25,6 +25,7 @@ class TFormUsuarios extends TPage implements iPage {
         $btnFechar        = new TBootstrapButton("btnFechar", "Fechar", "btn-primary");
         
         $itemBtnUsuarios = new TBootstrapGridCell();
+        $itemBtnUsuarios->addItem("&nbsp;");
         $itemBtnUsuarios->addItem($btnUsersAtivos);
         $itemBtnUsuarios->addItem($btnUsersInativos);
         $itemBtnUsuarios->addItem("&nbsp;&nbsp;|&nbsp;&nbsp;");

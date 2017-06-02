@@ -2,8 +2,8 @@
     include_once '../forms/TFormPeriodoAssinatura.php';
     
     $frmAssinatura = new TFormPeriodoAssinatura();
-    $frmAssinatura->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
-    $frmAssinatura->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
+    //$frmAssinatura->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
+    //$frmAssinatura->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
     $frmAssinatura->addJS("$(function() {"
                         . "  var dados      = " . json_encode($_GET["dt2"]) . ";"
                         . "  var valorTotal = 0; "

@@ -97,6 +97,7 @@ $(function() {
                     else {
                         var sEmp  = rs.r[0].nomefantasia;
                         var sUser = rs.r[0].nome;
+                        var sTipo = rs.r[0].tipo;
                         var sSession = [{
                                          id_empresa: rs.r[0].id_empresa,
                                          id_grupo:   rs.r[0].id_grupo,
@@ -126,6 +127,9 @@ $(function() {
                                 $("#aLogoff").show();
                                 $("#aEmp").show();
                                 $("#aUser").show();
+                                if (sTipo === "ADMN"){
+                                    $("#lnkGerenciamento").show();
+                                }
 
                                 $('#app').html(rs);
                             })
@@ -149,6 +153,7 @@ $(function() {
     
     $('#lnkEnviarNovaSenha').click(function(){
         $.get('./view/novasenha.php', function(rs){
+            $("#lnkGerenciamento").hide();
             $('#app').html(rs);
         })
         .fail(function(){
@@ -171,12 +176,13 @@ $(function() {
             $("#aLogoff").hide();
             $("#aEmp").hide();
             $("#aUser").hide();
+            $("#lnkGerenciamento").hide();
             
             $('#app').html("<br><br><br><br><div class='row'><div class='col-md-6 col-md-offset-3'>" + 
                            "<div class='alert alert-success ' role='alert'>" + 
                            "<h4>Logoff Concluido</h4>" +
                            "<p><strong>Ok!</strong>&nbsp;Logoff efetuado com sucesso. " + 
-                           "<a href='./' class='alert-link'>Clique para retornar ao login.</a></p>" + 
+                           "<a href='./' class='alert-link'>Clique aqui para retornar ao login.</a></p>" + 
                            "</div></div></div>");
             //alert("Logoff efetuado com Sucesso.");
             //window.open("./login.php", "_self");
@@ -185,6 +191,7 @@ $(function() {
             $("#aLogoff").hide();
             $("#aEmp").hide();
             $("#aUser").hide();
+            $("#lnkGerenciamento").hide();
             alert("ERRO!\nFalha ao finalizar a sessão.");
         });
     });

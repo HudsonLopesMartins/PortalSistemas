@@ -3,8 +3,8 @@
 
     $frmProfile = new TFormCadastroEmpresa();
     
-    $frmProfile->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
-    $frmProfile->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
+    //$frmProfile->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
+    //$frmProfile->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
     
     $frmProfile->addFileCSS("./libs/datatables/datatables.min.css");
     
