@@ -11,6 +11,7 @@ interface iUsuario {
     public function inserir($dados, $toJson = true);
     public function findEmailToLogin($dados, $toJson = true);
     public function findUserByEmp($dados, $toJson = true);
+    public function findUsersByEmp($dados, $toJson = true);
     public function findBySession($dados, $toJson = true);
     public function inserirLogAcesso($dados, $toJson = true);
     public function findByLogin($dados, $toJson = true);
@@ -58,6 +59,26 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   and u.pass       = ?
                                                   and u.id_empresa = ?
                                                   and u.ativo      = 1",
+                             "findUsersByEmp"=>"select
+                                                  u.id as id_usuario, 
+                                                  u.id_grupo,
+                                                  u.id_empresa, 
+                                                  u.nome,
+                                                  u.email,
+                                                  g.nome as grupo,
+                                                  e.razaosocial,
+                                                  e.nomefantasia,
+                                                  e.lat,
+                                                  e.lng,
+                                                  u.chpwd as mdsnh, 
+                                                  u.ativo
+                                                from usuario u, empresa e, grupoacesso g
+                                                where e.id         = u.id_empresa
+                                                  and e.ativo      = 0
+                                                  and g.id         = u.id_grupo
+                                                  and g.ativo      = 1
+                                                  and u.id_empresa = ?
+                                                  and u.ativo      = ?",
                              "findByLogin"=>"select
                                                  u.id as id_usuario, 
                                                  e.id as id_empresa, 
@@ -223,6 +244,37 @@ class Usuario extends DMUsuario implements iUsuario{
                 }
                 else {
                     $messageError = array("COD"=>"201", "MSG"=>"Usuário ou Senha inválidos.");
+                    echo TGetJSON::getJSON("r", $messageError);
+                }
+            }
+            $dsUsuario->Close();
+            $this->dbconn->Close();
+        } catch (exception $exc) {
+            header("Content-type: application/json;charset=utf-8");
+            echo json_encode($exc);
+        }
+    }
+    
+    public function findUsersByEmp($dados, $toJson = true) {
+        $SQL    = (object) $this->SQLText;
+        $rJson  = (bool) $toJson;
+
+        try {
+            if (isset($dados["d"]["usuario"][0]["ativo"])){
+                $ativo = $dados["d"]["usuario"][0]["ativo"];
+            }
+            else {
+                $ativo = 1;
+            }
+            $dsUsuario = $this->dbconn->Execute($SQL->findUsersByEmp, array($dados["d"]["empresa"][0]["id"], 
+                                                                            $ativo));
+            if ($rJson){
+                header("Content-type: application/json;charset=utf-8");
+                if ($dsUsuario->RecordCount() > 0){
+                    echo TGetJSON::getJSONData("r", $dsUsuario->GetArray());
+                }
+                else {
+                    $messageError = array("COD"=>"201", "MSG"=>htmlspecialchars($GLOBALS['message'][201]));
                     echo TGetJSON::getJSON("r", $messageError);
                 }
             }

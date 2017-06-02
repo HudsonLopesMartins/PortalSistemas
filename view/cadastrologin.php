@@ -2,6 +2,10 @@
     include_once '../forms/TFormCadastroLogin.php';
     
     $frmCadLogin = new TFormCadastroLogin();
+    
+    $frmCadLogin->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
+    $frmCadLogin->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
+    
     $frmCadLogin->addJS("$(function() {"
                         . "  var dados = " . json_encode($_GET["dt3"]) . ";"
                         . "  $('#edtUsuarioLogin').val(dados[0].d.empresa[0].email);"
