@@ -17,6 +17,7 @@
                                     "success", "<h4>Sucesso</h4>") .
              "</div></div>";
         */
+        echo "<link href=\"libs/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\"> \r\n";
+        echo "<script src=\"libs/bootstrap/js/bootstrap.min.js\" type=\"text/javascript\"></script> \r\n";
         header("location:./view/appsmenu.php?id_empresa=" . $_SESSION["id_empresa"]);
     }
-?>

@@ -49,7 +49,8 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   e.razaosocial,
                                                   e.nomefantasia,
                                                   e.lat,
-                                                  e.lng
+                                                  e.lng,
+                                                  u.tipo
                                                 from usuario u, empresa e, grupoacesso g
                                                 where e.id         = u.id_empresa
                                                   and e.ativo      = 0

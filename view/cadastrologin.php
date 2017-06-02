@@ -3,8 +3,8 @@
     
     $frmCadLogin = new TFormCadastroLogin();
     
-    $frmCadLogin->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
-    $frmCadLogin->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
+    //$frmCadLogin->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
+    //$frmCadLogin->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
     
     $frmCadLogin->addJS("$(function() {"
                         . "  var dados = " . json_encode($_GET["dt3"]) . ";"
