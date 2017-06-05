@@ -63,7 +63,7 @@ class TFormPeriodoAssinatura extends TPage implements iPage{
         $panelPrincipal->setTitle("Escolha do(s) Sistema(s)", TRUE);
         $panelPrincipal->addItem($formEscolhaAssinatura);
         
-        $btnConfirmar   = new TBootstrapButton("btnContinuar", "Continuar... configurar usuário", "btn-primary");
+        $btnConfirmar   = new TBootstrapButton("btnContinuar", "Continuar, configurar usuário", "btn-primary");
         $btnCancelar    = new TBootstrapButton("btnCancelar", "Cancelar");
         
         $btnConfirmar->addImage("glyphicon-ok");
