@@ -50,8 +50,23 @@ class TFormLogin implements iFormLogin {
         
         $ttEdit     = new TTypeEdit();
 
-        $edtUsuario = new TBootstrapEdit("edtUsuario", $ttEdit->get()->email, "Email", "form-control");
-        $edtSenha   = new TBootstrapEdit("edtSenha", $ttEdit->get()->password, "Senha", "form-control");
+        $edtUsuario = new TBootstrapEdit("edtUsuario", $ttEdit->get()->email, "Email" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
+                                         "<a href='#' id='lnkEfetuarCadastro'>Novo Cadastro</a>", "form-control");
+        $edtSenha   = new TBootstrapEdit("edtSenha", $ttEdit->get()->password, "Senha " . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+                                         "&nbsp;&nbsp;&nbsp;" . 
+                                         "<a href='#' id='lnkEnviarNovaSenha'>Esqueci minha Senha</a>", "form-control");
         //$edtUsuario->setPlaceholder("Informe o seu Email");
         //$edtSenha->setPlaceholder("Informe a sua Senha");
         
@@ -60,12 +75,15 @@ class TFormLogin implements iFormLogin {
         $formLogin->addItem($edtSenha);
         
         $panelPrincipal = new TBootstrapPanel();
-        $panelPrincipal->setTitle("Sistema de Solicitações - Login", TRUE);
+        $panelPrincipal->setTitle("Portal de Sistemas - Login", TRUE);
         $panelPrincipal->addItem($formLogin);
+        /**
         $panelPrincipal->addItem("<div class='col-md-12'>"
                                . "<div class='col-md-6'><a href='#' id='lnkEnviarNovaSenha'>Esqueci minha Senha</a></div>"
-                               . "<div class='col-md-6'><a href='#' id='lnkEfetuarCadastro'>Efetuar Cadastro</a></div>"
+                               . "<div class='col-md-6'><a href='#' id='lnkEfetuarCadastro'>Novo Cadastro</a></div>"
                                . "</div>");
+         * 
+         */
         
         $btnConfirmar = new TBootstrapButton("btnConfirmar", "Confirmar");
         $btnCancelar  = new TBootstrapButton("btnCancelar", "Cancelar");
