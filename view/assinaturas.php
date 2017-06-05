@@ -2,11 +2,13 @@
     include_once '../forms/TFormPeriodoAssinatura.php';
     
     $frmAssinatura = new TFormPeriodoAssinatura();
-    //$frmAssinatura->addFileCSS("./libs/bootstrap/css/bootstrap.min.css");
-    //$frmAssinatura->addFileJS("./libs/bootstrap/js/bootstrap.min.js");
     $frmAssinatura->addJS("$(function() {"
                         . "  var dados      = " . json_encode($_GET["dt2"]) . ";"
                         . "  var valorTotal = 0; "
+                        
+                        . "  function isEmpty(value){ "
+                        . "     return (value == null || value.length === 0 || value == ''); "
+                        . "  } "
 
                         . "  $('input[type=checkbox]').change(function(i){"
                         . "     if ($(this).is(':checked')){"
@@ -23,21 +25,33 @@
                         . "  });"
             
                         . "  $('#btnContinuar').click(function(){"
+                        . "     var isOk      = true;"
+                        . "     var haPeriodo = $('#ddlPeriodoAssinatura').val();"
+                        . "     var haSistema;"
+            
                         . "     dados[0].d.plano[0].op = $('#ddlPeriodoAssinatura').val();"
                         . "     dados[0].d.sistemas = []; "
                         . "     $('input[type=checkbox]').each(function(i){"
                         . "         if ($(this).is(':checked')){"
                         . "             dados[0].d.sistemas.push({'sid':$(this).val()});"
+                        . "             haSistema = $(this).val();"
                         . "         }"
                         . "     });"
-            
-                        . "     if (confirm('O período de assinatura e o(s) sistema(s) escolhido(s) estão corretos?') == true){"
-                        . "         $.get('./view/cadastrologin.php', { dt3: dados }, function(rs){"
-                        . "             $('#app').html(rs);"
-                        . "         })"
-                        . "         .fail(function(){"
-                        . "             alert('Erro ao abrir formulário');"
-                        . "         });"
+
+                        . "     if (isEmpty(haSistema) || haPeriodo === '0'){"
+                        . "         isOk = false;"
+                        . "         alert('Selecione um período e/ou um ou mais sistemas e tente novamente.');"
+                        . "     }"
+
+                        . "     if (isOk == true){"
+                        . "         if (confirm('O período de assinatura e o(s) sistema(s) escolhido(s) estão corretos?') == true){"
+                        . "             $.get('./view/cadastrologin.php', { dt3: dados }, function(rs){"
+                        . "                 $('#app').html(rs);"
+                        . "             })"
+                        . "             .fail(function(){"
+                        . "                 alert('Erro ao abrir formulário');"
+                        . "             });"
+                        . "         }"
                         . "     }"
             
                         . "  });"
