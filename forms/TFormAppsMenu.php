@@ -14,8 +14,6 @@ require_once '../libs/adodb5/adodb.inc.php';
 
 include_once '../class/Plano.class.php';
 include_once '../class/Sistemas.class.php';
-    
-include_once '../libs/interface/iFormsPage.inc.php';
 
 include_once '../libs/app.widgets/TPage.class.php';
 include_once '../libs/app.widgets/bs/TBootstrapCommon.class.php';

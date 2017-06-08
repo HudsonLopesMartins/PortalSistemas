@@ -6,6 +6,7 @@
  * @author hudson
  * @version 0.0.1
  */
+
 interface iUsuario {
     public function getVersion();
     public function inserir($dados, $toJson = true);
@@ -17,6 +18,7 @@ interface iUsuario {
     public function findByLogin($dados, $toJson = true);
     public function findUserByEmail($dados, $toJson = true);
     public function changePwd($dados, $toJson = true);
+    public function viewDetalhesUsuario($dados, $toJson = true);
 }
 
 class DMUsuario extends ADODB_Active_Record {
@@ -80,6 +82,36 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   and g.ativo      = 1
                                                   and u.id_empresa = ?
                                                   and u.ativo      = ?",
+                             "viewDetalhesUsuario"=>"select
+                                                  id_empresa,
+                                                  id_grupo,
+                                                  id_usuario,
+                                                  id_dadousuario,
+                                                  id_endereco,
+                                                  id_cidade,
+                                                  id_uf,
+                                                  grupo,
+                                                  email_usuario,
+                                                  nome_usuario,
+                                                  ramal,
+                                                  cpf,
+                                                  endereco,
+                                                  numero,
+                                                  complemento,
+                                                  bairro,
+                                                  email_pessoal,
+                                                  lat,
+                                                  lng,
+                                                  cep,
+                                                  nome_cidade,
+                                                  sigla,
+                                                  tipo,
+                                                  datacadastro,
+                                                  ativo,
+                                                  is_adm
+                                                from vwdetalheusuario
+                                                where id_empresa = ?
+                                                  and id_usuario = ?",
                              "findByLogin"=>"select
                                                  u.id as id_usuario, 
                                                  e.id as id_empresa, 
@@ -547,6 +579,41 @@ class Usuario extends DMUsuario implements iUsuario{
             header("Content-type: application/json;charset=utf-8");
             $message = array("COD"=>"402", "MSG"=> htmlspecialchars("Não foi possível alterar a senha. Erro: {$exc}"));
             echo TGetJSON::getJSON("f", $message);
+        }
+    }
+    
+    public function viewDetalhesUsuario($dados, $toJson = true) {
+        $SQL    = (object) $this->SQLText;
+        $rJson  = (bool) $toJson;
+
+        try {
+            $dsDetalheUsuario = $this->dbconn->Execute($SQL->viewDetalhesUsuario, array($dados["d"]["empresa"][0]["id"], 
+                                                                                        $dados["d"]["usuario"][0]["id"]));
+            if ($rJson){
+                header("Content-type: application/json;charset=utf-8");
+                if ($dsDetalheUsuario->RecordCount() > 0){
+                    echo TGetJSON::getJSONData("r", $dsDetalheUsuario->GetArray());
+                }
+                else {
+                    $messageError = array("COD"=>"201", "MSG"=>htmlspecialchars($GLOBALS['message'][201]));
+                    echo TGetJSON::getJSON("r", $messageError);
+                }
+            }
+            else {
+                if ($dsDetalheUsuario->RecordCount() > 0){
+                    $message = array("r" => $dsDetalheUsuario->GetArray());
+                    return $message;
+                }
+                else {
+                    $message = array("r" => array("COD"=>"201", "MSG"=> htmlspecialchars($GLOBALS['message'][201])));
+                    return $message;
+                }
+            }
+            $dsDetalheUsuario->Close();
+            $this->dbconn->Close();
+        } catch (exception $exc) {
+            header("Content-type: application/json;charset=utf-8");
+            echo json_encode($exc);
         }
     }
 }
