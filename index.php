@@ -30,6 +30,7 @@
                 $("#aLogoff").hide();
                 $("#aEmp").hide();
                 $("#aUser").hide();
+                $("#lnkGerenciamento").hide();
             });
         </script>
     </head>
@@ -50,15 +51,17 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#" id="aEmp">Empresa</a></li>
                         <li><a href="#" id="aUser">Usuário Logado</a></li>
-                        <li class="dropdown">
+                        <li class="dropdown" id="lnkGerenciamento">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Gerenciamento <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" id="lnkListaUsuarios"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> &nbsp;&nbsp;Usuários</a></li>
                                 <li><a href="#"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> &nbsp;&nbsp;Grupo de Ususários</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> &nbsp;&nbsp;Dados Cadastrais</a></li>
+                                <!--
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> &nbsp;&nbsp;Logar-se como Administrador</a></li>
+                                -->
                             </ul>
                         </li>
                         <li><a href="#" id="aLogoff">Efetuar Logoff</a></li>

@@ -145,7 +145,7 @@ class TFormCadastroEmpresa extends TPage implements iFormsPage{
         $panelPrincipal->addItem($formCad);
         $panelPrincipal->addItem("<input type='hidden' id='hdIBGE'>");
         
-        $btnConfirmar   = new TBootstrapButton("btnConfirmar", "Continuar... selecione o sistema a ser usado", "btn-primary");
+        $btnConfirmar   = new TBootstrapButton("btnConfirmar", "Continuar, selecionar o sistema a ser usado", "btn-primary");
         $btnCancelar    = new TBootstrapButton("btnCancelar", "Cancelar");
         
         $btnConfirmar->addImage("glyphicon-ok");
