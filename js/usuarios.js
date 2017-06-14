@@ -39,7 +39,7 @@ $(function() {
         var dados = [{
             'd': {
                 'empresa': [{
-                    'id': '1'
+                    'id': $('#hdIDe').val()
                 }],
                 'usuario': [{
                     'ativo': '0'
@@ -95,7 +95,7 @@ $(function() {
         var dados = [{
             'd': {
                 'empresa': [{
-                    'id': '1'
+                    'id': $('#hdIDe').val()
                 }],
                 'usuario': [{
                     'ativo': '1'

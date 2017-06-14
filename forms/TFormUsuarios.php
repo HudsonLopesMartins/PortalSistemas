@@ -16,7 +16,7 @@ include_once '../libs/app.widgets/bs/TBootstrapGridCell.class.php';
 include_once '../libs/app.widgets/bs/TBootstrapButton.class.php';
 
 class TFormUsuarios extends TPage implements iPage {
-    public function prepare() {
+    public function prepare($dados) {
         $this->loadScripts();
        
         
@@ -31,6 +31,9 @@ class TFormUsuarios extends TPage implements iPage {
         $itemBtnUsuarios->addItem("&nbsp;&nbsp;|&nbsp;&nbsp;");
         $itemBtnUsuarios->addItem($btnFechar);
         $itemBtnUsuarios->addItem("<br><br>");
+        $itemBtnUsuarios->addItem("<input type='hidden' id='hdIDe' value='{$dados["d"]["empresa"][0]["id"]}'>");
+        $itemBtnUsuarios->addItem("<input type='hidden' id='hdIDu' value='{$dados["d"]["usuario"][0]["id"]}'>");
+        
         
         $itemGridUsuarios = new TBootstrapGridCell();
         $itemGridUsuarios->setWidth("col-md-12");

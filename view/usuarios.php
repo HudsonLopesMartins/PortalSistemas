@@ -20,6 +20,7 @@ else {
     $frmUser->addFileJS("./libs/datatables/datatables.min.js");
 
     $frmUser->addFileJS("./js/usuarios.js");
-    $frmUser->prepare();
+    $frmUser->prepare(array("d" => array("empresa" => array(0 => array("id"=>$_SESSION["id_empresa"])),
+                                         "usuario" => array(0 => array("id"=>$_SESSION["id_usuario"])))));
     $frmUser->open();
 }
