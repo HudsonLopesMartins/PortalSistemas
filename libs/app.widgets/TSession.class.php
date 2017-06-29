@@ -37,6 +37,22 @@ class TSession {
             }
         }
     }
+    
+    /**
+     * método getSValue
+     * retorna o valor da variavel da sessão
+     * @param string $sKey nome da variavel
+     * @return string
+     */
+    function get($sKey) {
+        if (isset($_SESSION[$sKey])){
+            return $_SESSION[$sKey];
+        }
+    }
+    
+    function getAll() {
+        print_r($_SESSION);
+    }
 
     function freeSession($sKey) {
         foreach ($sKey as $key) {

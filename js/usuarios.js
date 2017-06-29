@@ -1,4 +1,36 @@
-$(function() {    
+$(function() {
+    var itemIndex      = 0;
+    var panelIndex     = [
+        "formlistausuarios",
+        "formdetalhesusuario"
+    ];
+    
+    var allEditsFormUsuario = $([]).add($("#edtNome"))
+                                   .add($("#edtCPF"))
+                                   .add($("#edtEndereco"))
+                                   .add($("#edtNumero"))
+                                   .add($("#edtBairro"))
+                                   .add($("#edtComplemento"))
+                                   .add($("#edtCEP"))
+                                   .add($("#edtCidade"))
+                                   .add($("#edtUF"))
+                                   .add($("#edtEmailPessoal"));
+    var allHiddenFormUsuario = $([]).add($("#hdIDGrp"))
+                                    .add($("#hdIDu"))
+                                    .add($("#hdIDDUs"))
+                                    .add($("#hdIDEnd"))
+                                    .add($("#hdIDCid"))
+                                    .add($("#hdIDEst"))
+                                    .add($("#hdLat"))
+                                    .add($("#hdLng"))
+                                    .add($("#hdIBGE"));
+    $("#ddlCidade").hide();
+    $("#ddlUF").hide();
+
+    $("#dlgStatus").hide();
+    $('#edtCEP').mask('99.999-999', {placeholder:'_'});
+    $('#edtCPF').mask('999.999.999-99', {placeholder:'_'});
+
     $('#grdUsuarios').DataTable({
         language: {
             url: './libs/datatables/pt-BR/Portuguese-Brasil.json'
@@ -10,29 +42,208 @@ $(function() {
         searching:      true
     });
     
+    function setPanelItem(panelitem){
+        $('.carousel').carousel(panelIndex.indexOf(panelitem));
+        $('.carousel').carousel('pause');
+        itemIndex = panelIndex.indexOf(panelitem);
+    }
+    
+    function getPanelItem(){
+        return itemIndex;
+    }
+    
+    function carregarUF(){
+        var dados = [{
+                'toJson': true
+            }];
+        $.post('./include/TJson.class.php', ({
+                                                className: 'Estados',
+                                                methodName: 'getAllOrdBySigla',
+                                                params: dados
+                                            }), 
+        function(rs){
+            if (rs.r[0].COD === '201'){
+                alert('AVISO: ' + rs.r[0].MSG);
+            }
+            else {
+                $("#ddlUF").empty();
+                $("#ddlUF").append($("<option>", {value: "0", text: "Estados"}));
+                $.each(rs.r, function(idx, value){
+                    $("#ddlUF").append($("<option>", {value: value.id, text: value.sigla}));
+                });
+            }
+        }, 'json')
+        .fail(function(jqXHR, status, error){
+            var msg = 'Erro ao carregar Registros!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
+                      'Error Type: ' + error;
+            alert(msg);
+        });
+    }
+    
+    function carregarCidades(sigla, selectid){
+        var id = 0;
+        if(selectid !== 0){
+            id = parseInt(selectid);
+        }
+        
+        var dados = [{
+                'd':{
+                    'estado': [{
+                            'uf': sigla
+                    }]
+                },
+                'toJson': true
+            }];
+        $.post('./include/TJson.class.php', ({
+                                                className: 'Cidade',
+                                                methodName: 'findAllByUf',
+                                                params: dados
+                                            }), 
+        function(rs){
+            if (rs.r[0].COD === '201'){
+                alert('AVISO: ' + rs.r[0].MSG);
+            }
+            else {
+                $("#ddlCidade").empty();
+                $("#ddlCidade").append($("<option>", {value: "0", text: "Selecione uma Cidade"}));
+                $.each(rs.r, function(idx, value){
+                    $("#ddlCidade").append($("<option>", {value: value.id, text: value.nome}));
+                });
+                $("#ddlCidade").val(id);
+            }
+        }, 'json')
+        .fail(function(jqXHR, status, error){
+            var msg = 'Erro ao carregar Registros!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
+                      'Error Type: ' + error;
+            alert(msg);
+        });
+    }
+    
     function detalhesUsuario(ide, idu){
+
         var dados = [{
             'd': {
                 'empresa': [{
                     'id': ide
                 }],
                 'usuario': [{
-                    'idu': idu
+                    'id': idu
                 }]
             }
         }];
-        window.open("./view/detalhesusuario.php?m=view&ide=" + ide + "&idu=" + idu, "_blank", "toolbar=0,titlebar=0,menubar=0,width=800,height=450");
+    
+        $("#ddlCidade").hide();
+        $("#ddlUF").hide();
+        
+        $("#edtCidade").show();
+        $("#edtUF").show();
+    
+        setPanelItem("formdetalhesusuario");
+        
+        $("#dlgStatus").show();
+        var messageWait = function(){
+            return $("#dlgStatus").fadeIn(3000).delay(3000).fadeOut();
+        };
+        $.when(messageWait()).done(function(){
+            $.post("./include/TJson.class.php", ({
+                                                    className: "Usuario",
+                                                    methodName: "viewDetalhesUsuario",
+                                                    params: dados
+                                                }), 
+            function(rs){
+                if (rs.r[0].COD === "201"){
+                    alert("AVISO: " + rs.r[0].MSG);
+                }
+                else {
+                    //$("#edtRamal").val(rs.r[0].ramal);
+                    //$("#edtEmail").val(rs.r[0].email_usuario);
+                    $("#edtNome").val(rs.r[0].nome_completo);
+                    $("#edtCPF").val(rs.r[0].cpf);
+                    $("#edtEndereco").val(rs.r[0].endereco);
+                    $("#edtNumero").val(rs.r[0].numero);
+                    $("#edtBairro").val(rs.r[0].bairro);
+                    $("#edtComplemento").val(rs.r[0].complemento);
+                    $("#edtCEP").val(rs.r[0].cep);
+                    $("#edtCidade").val(rs.r[0].nome_cidade);
+                    $("#edtUF").val(rs.r[0].sigla);
+                    $("#edtEmailPessoal").val(rs.r[0].email_pessoal);
+
+                    //$("#hdIDe").val(rs.r[0].id_empresa);
+                    $("#hdIDGrp").val(rs.r[0].id_grupo);
+                    $("#hdIDu").val(rs.r[0].id_usuario);
+                    $("#hdIDDUs").val(rs.r[0].id_dadousuario);
+                    $("#hdIDEnd").val(rs.r[0].id_endereco);
+                    $("#hdIDCid").val(rs.r[0].id_cidade);
+                    $("#hdIDEst").val(rs.r[0].id_uf);
+                    $("#hdLat").val(rs.r[0].lat);
+                    $("#hdLng").val(rs.r[0].lng);
+                    $("#hdIBGE").val(rs.r[0].ibge);
+                    
+                    $("#ddlUF").val(rs.r[0].id_uf);
+                    carregarCidades($("#ddlUF option:selected").text(), rs.r[0].id_cidade);
+                }
+            }, "json")
+            .fail(function(jqXHR, status, error){
+                var msg = "Erro ao carregar Registros!\r\n" + 
+                          "- Mensagens \r\n" +
+                          "XHR: " + jqXHR.reponseXML + "\r\n" + 
+                          "Status: " + status + "\r\n" +
+                          "Error Type: " + error;
+                alert(msg);
+            });
+
+        });
+        $("#btnSalvarDetalhes").hide();
+        //window.open("./view/detalhesusuario.php?m=" + mode + "&ide=" + ide + 
+        //            "&idu=" + idu, "_blank", "toolbar=0,titlebar=0,menubar=0,width=1000,height=600");
     }
     
+    carregarUF();
+    
     $(document).on('click', '.view', function(){
-        detalhesUsuario($(this).attr("ide"), $(this).attr("idu"));
+        var idE = $(this).attr("ide");
+        var idU = $(this).attr("idu");
+        
+        allEditsFormUsuario.val("");
+        allHiddenFormUsuario.val("");
+        
+        detalhesUsuario(idE, idU);
         //setPanelItem("formcategoria");
-        //alert("Exibir Detalhes para a empresa " + $(this).attr("ide") + " " +
-        //      "e usuario " + $(this).attr("idu"));
+    });
+    
+    $(document).on('click', '.edit', function(){
+        var idE = $(this).attr("ide");
+        var idU = $(this).attr("idu");
+        
+        allEditsFormUsuario.val("");
+        allHiddenFormUsuario.val("");
+        
+        detalhesUsuario(idE, idU);
+        //setPanelItem("formcategoria");
     });
 
     $('#btnFechar').click(function(){
-        window.open('./', '_self');
+        window.open('./principal.php?v=appsmenu', '_self');
+        /*
+        $.get('./principal.php', function(rs){
+            $('#app').html(rs);
+        })
+        .fail(function(){
+            alert('Erro ao abrir formulário');
+        });
+        */
+    });
+    
+    $("#btnFecharDetalhes").click(function(){
+        allEditsFormUsuario.val("");
+        allHiddenFormUsuario.val("");
+        setPanelItem("formlistausuarios");
     });
 
     $('#btnUsersInativos').click(function(){
@@ -60,17 +271,32 @@ $(function() {
                 var t = $('#grdUsuarios').DataTable();
                 t.clear().draw();
                 $.each(rs.r, function(idx, value){
-                    if (value.ativo === 1){
-                        var controles = "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'><span class='glyphicon glyphicon-lock' aria-hidden='true'></span></a>";
+                    if (value.tipo === "DFLT"){
+                        var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
+                                        "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Desbloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'>" + 
+                                        "<i class='fa fa-unlock' aria-hidden='true'></i></a>" +
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Tornar Usuário Administrador' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='up'>" + 
+                                        "<i class='fa fa-universal-access' aria-hidden='true'></i></a>";
                     }
                     else {
-                        var controles = "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'><span class='glyphicon glyphicon-ok-sign' aria-hidden='true'></span></a>";
+                        var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
+                                        "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Desbloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'>" + 
+                                        "<i class='fa fa-unlock' aria-hidden='true'></i></a>" +
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Retirar Permissões de Administrador' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='down'>" + 
+                                        "<i class='fa fa-user' aria-hidden='true'></i></a>";
                     }
-
                     t.row.add([
                         value.nome,
                         value.email,
@@ -81,10 +307,10 @@ $(function() {
             }
         }, 'json')
         .fail(function(jqXHR, status, error){
-            var msg = 'Erro ao carregar Registros!\r\n' + 
-                      '- Mensagens \r\n' +
-                      'XHR: ' + jqXHR.reponseXML + '\r\n' + 
-                      'Status: ' + status + '\r\n' +
+            var msg = 'Erro ao carregar Registros!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
                       'Error Type: ' + error;
             alert(msg);
         });
@@ -116,15 +342,31 @@ $(function() {
                 var t = $('#grdUsuarios').DataTable();
                 t.clear().draw();
                 $.each(rs.r, function(idx, value){
-                    if (value.ativo === 1){
-                        var controles = "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'><span class='glyphicon glyphicon-lock' aria-hidden='true'></span></a>";
+                    if (value.tipo === "DFLT"){
+                        var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
+                                        "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Bloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'>" + 
+                                        "<i class='fa fa-lock' aria-hidden='true'></i></a>" +
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Tornar Usuário Administrador' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='up'>" + 
+                                        "<i class='fa fa-universal-access' aria-hidden='true'></i></a>";
                     }
                     else {
-                        var controles = "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'><span class='glyphicon glyphicon-ok-sign' aria-hidden='true'></span></a>";
+                        var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
+                                        "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Bloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'>" + 
+                                        "<i class='fa fa-lock' aria-hidden='true'></i></a>" +
+                                        "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='#' title='Retirar Permissões de Administrador' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='down'>" + 
+                                        "<i class='fa fa-user' aria-hidden='true'></i></a>";
                     }
 
                     t.row.add([
@@ -144,6 +386,109 @@ $(function() {
                       'Error Type: ' + error;
             alert(msg);
         });
+    });
+    
+    $("#btnAlterarDetalhes").click(function(){
+        $("#btnSalvarDetalhes").show();
+        $("#edtEmail").focus();
+        
+        $("#ddlCidade").show();
+        $("#ddlUF").show();
+        
+        $("#edtCidade").hide();
+        $("#edtUF").hide();
+        
+        setStateModeForm("smfEdit");
+    });
+    
+    $("#btnSalvarDetalhes").click(function(){
+        var dados = [{
+            'd': {
+                'empresa': [{
+                        'id': $('#hdIDe').val()
+                }],
+                'usuario':[{
+                        'id':   $("#hdIDu").val(),
+                        'nome': $("#edtNome").val()
+                }],
+                'dadosusuario': [{
+                        'id':           $("#hdIDDUs").val(),
+                        'nome':         $("#edtNome").val(),
+                        'cpf':          $("#edtCPF").val(),
+                        'numero':       $("#edtNumero").val(),
+                        'complemento':  $("#edtComplemento").val(),
+                        'emailpessoal': $("#edtEmailPessoal").val(),
+                        'lat':          $("#hdLat").val(),
+                        'lng':          $("#hdLng").val()
+                }],
+                'endereco':[{
+                        'cep':      $("#edtCEP").val(),
+                        'ibge':     $("#hdIBGE").val(),
+                        'endereco': $("#edtEndereco").val(),
+                        'bairro':   $("#edtBairro").val(),
+                        'uf':       $("#edtUF").val()
+                }],
+                'cidade':[{
+                        'cidade': $("#edtCidade").val()
+                }]
+            }
+        }];
 
+        $.post('./include/TJson.class.php', ({
+                                                className: 'Usuario',
+                                                methodName: 'editarDetalhesUsuario',
+                                                params: dados
+                                            }), 
+        function(rs){
+            alert(rs.r[0].MSG);
+        }, 'json')
+        .fail(function(jqXHR, status, error){
+            var msg = 'Erro ao Editar Registro!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
+                      'Error Type: ' + error;
+            alert(msg);
+        });
+    });
+    
+    $('#btnConsultarCEP').click(function(){
+        var cep = $("#edtCEP").val();
+        if (cep !== ""){
+            cep = cep.replace(".", "");
+            $.getJSON("http://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(jsonCEP){
+                if (!("erro" in jsonCEP)){
+                    $("#edtEndereco").val(jsonCEP.logradouro);
+                    $("#edtBairro").val(jsonCEP.bairro);
+                    $("#edtCidade").val(jsonCEP.localidade);
+                    $("#edtUF").val(jsonCEP.uf);
+                    $("#hdIBGE").val(jsonCEP.ibge);
+                    
+                    $("#edtNumero").focus();
+                }
+                else {
+                    $("#edtCEP").val("");
+                    $("#hdIBGE").val("");
+                    alert("CEP não localizado.");
+                }
+            });
+        }
+        else {
+            $("#edtCEP").val("");
+            $("#hdIBGE").val("");
+        }
+    });
+    
+    $("#ddlUF").change(function(){
+        var s = $("#ddlUF option:selected").text();
+        $("#hdIDEst").val($("#ddlUF option:selected").val());
+        $("#edtUF").val(s);
+        carregarCidades(s, 0);
+    });
+    
+    $("#ddlCidade").change(function(){
+        var c = $("#ddlCidade option:selected").text();
+        $("#hdIDCid").val($("#ddlCidade option:selected").val());
+        $("#edtCidade").val(c);
     });
 });

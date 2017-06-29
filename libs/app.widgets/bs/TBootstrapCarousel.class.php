@@ -29,6 +29,11 @@ class TBootstrapCarousel extends TBootstrapCommon implements iBootstrapCarousel 
         parent::addNode($item);
         $this->itemPageActive[] = $active;
     }
+
+    public function addItem($item, $active = false) {
+        parent::addNode($item);
+        $this->itemPageActive[] = $active;
+    }
     
     public function show() {
         try {
@@ -47,6 +52,9 @@ class TBootstrapCarousel extends TBootstrapCommon implements iBootstrapCarousel 
                     
                     if (is_object($nodekey)){
                         $pageItem .= $nodekey->show();
+                    }
+                    else if ((is_string($nodekey)) or (is_numeric($nodekey))){
+                        $pageItem .= $nodekey;
                     }
                     $pageItem .= "</div>";
                 }

@@ -48,20 +48,9 @@ class TFormLogin implements iFormLogin {
             echo $this->scriptJS;
         }
         
-        $ttEdit     = new TTypeEdit();
-
-        $edtUsuario = new TBootstrapEdit("edtUsuario", $ttEdit->get()->email, "Email",
-                                         /*
-                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
-                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
-                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
-                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
-                                         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
-                                         "&nbsp;&nbsp;" .
-                                         "<a href='#' id='lnkEfetuarCadastro'>Criar um novo cadastro</a>", 
-                                          * 
-                                          */
-                                         "form-control");
+        //$ttEdit     = new TTypeEdit();
+        //$edtUsuario = new TBootstrapEdit("edtUsuario", $ttEdit->get()->email, "Email", "form-control");
+        /**
         $edtSenha   = new TBootstrapEdit("edtSenha", $ttEdit->get()->password, "Senha " . 
                                          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
                                          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
@@ -70,31 +59,32 @@ class TFormLogin implements iFormLogin {
                                          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
                                          "&nbsp;&nbsp;&nbsp;" . 
                                          "<a href='#' id='lnkEnviarNovaSenha'>Esqueci minha Senha</a>", "form-control");
-        //$edtUsuario->setPlaceholder("Informe o seu Email");
-        //$edtSenha->setPlaceholder("Informe a sua Senha");
+        */
+        //$edtSenha   = new TBootstrapEdit("edtSenha", $ttEdit->get()->password, "Senha", "form-control");
         
         $formLogin  = new TBootstrapForm();
-        $formLogin->addItem($edtUsuario);
-        $formLogin->addItem($edtSenha);
+        $formLogin->addItem("<div class='input-group margin-bottom-sm'>"
+                          . "   <span class='input-group-addon'><i class='fa fa-envelope-o fa-fw'></i></span>"
+                          . "   <input type='email' id='edtUsuario' class='form-control' placeholder='Email'>"
+                          . "</div><br>");
+        $formLogin->addItem("<div class='input-group margin-bottom-sm'>"
+                          . "   <span class='input-group-addon'><i class='fa fa-key fa-fw'></i></span>"
+                          . "   <input type='password' id='edtSenha' class='form-control' placeholder='Senha'>"
+                          . "</div><br>");
         
         $panelPrincipal = new TBootstrapPanel();
-        $panelPrincipal->setTitle("Portal de Sistemas - Login", TRUE);
+        $panelPrincipal->setTitle("<div class='panel-title'>Login</div>" . 
+                                  "<div style='float:right; font-size: 85%; position: relative; top:-10px'>" . 
+                                  "<a href='#' id='lnkEnviarNovaSenha'>Esqueci minha Senha</a></div>");
         $panelPrincipal->addItem($formLogin);
-        /**
-        $panelPrincipal->addItem("<div class='col-md-12'>"
-                               . "<div class='col-md-6'><a href='#' id='lnkEnviarNovaSenha'>Esqueci minha Senha</a></div>"
-                               . "<div class='col-md-6'><a href='#' id='lnkEfetuarCadastro'>Novo Cadastro</a></div>"
-                               . "</div>");
-         * 
-         */
         
-        $btnConfirmar = new TBootstrapButton("btnConfirmar", "Confirmar");
-        $btnCancelar  = new TBootstrapButton("btnCancelar", "Cancelar");
-        $btnConfirmar->addImage("glyphicon-ok");
+        $btnCarregarEmpresas = new TBootstrapButton("btnCarregarEmpresas", "Carregar Empresas");
+        $btnCancelar         = new TBootstrapButton("btnCancelar", "Cancelar");
+        $btnCarregarEmpresas->addImage("glyphicon-ok");
         $btnCancelar->addImage("glyphicon-remove");
         
         $ftPanelPrincipal = new TBootstrapPanelFooter();
-        $ftPanelPrincipal->addItem($btnConfirmar);
+        $ftPanelPrincipal->addItem($btnCarregarEmpresas);
         $ftPanelPrincipal->addItem($btnCancelar);
         
         $panelPrincipal->setFooter($ftPanelPrincipal);
@@ -103,10 +93,12 @@ class TFormLogin implements iFormLogin {
         $btnEfetuarLogin->addImage("glyphicon-log-in");
         $ddlEmpresa   = new TBootstrapSelect("ddlEmpresa", false, "form-control");
         $ddlEmpresa->addItem("0", "Selecione uma Empresa");
+        
         //$e = (object) (new Plano)->findAll(false);
         //for($i = 0; $i < count($p->r); $i++){
         //    $ddlEmpresa->addItem($e->r[$i]["id"], $e->r[$i]["nomefantasia"]);
         //}
+        
         $formEmpresa = new TBootstrapForm();
         $formEmpresa->addItem($ddlEmpresa);
         
@@ -130,8 +122,6 @@ class TFormLogin implements iFormLogin {
                           . "Novo aqui? <a href='#' id='lnkEfetuarCadastro'>Crie um novo cadastro</a>.</p></div>" 
                           . " </div>"
                           . "</div>");
-        
-        //$areaLogin->style = "position:absolute; top:100px";
 
         $areaPrincipal->addItem($areaLogin);
         echo $areaPrincipal->show();

@@ -15,29 +15,37 @@ interface iCidade {
     public function findAllByUf($dados, $toJson = true);
 }
 
+final class TQuerysCidade {
+    function __construct() {}
+    public static function getQuery($queryname) {
+        $query["findCity"] = "select
+                                c.id,
+                                c.id_estado,
+                                c.nome,
+                                c.capital,
+                                e.sigla as uf
+                              from cidades c, estados e
+                              where e.id   = c.id_estado
+                                and c.nome = ?
+                              order by c.capital desc, c.id";
+        $query["findAllByUf"] = "select
+                                   c.id,
+                                   c.id_estado,
+                                   c.nome,
+                                   c.capital,
+                                   e.sigla as uf
+                                 from cidades c, estados e
+                                 where e.id    = c.id_estado
+                                   and e.sigla = ?
+                                 order by c.capital desc, c.id";
+        
+        return $query[$queryname];
+    }
+}
+
 class Cidade implements iCidade{
     private $sVersion       = "0.0.1";
     private $dbconn         = null;
-    private $SQLText = array("findCity"=>"select
-                                            c.id,
-                                            c.id_estado,
-                                            c.nome,
-                                            c.capital,
-                                            e.sigla as uf
-                                          from cidades c, estados e
-                                          where e.id   = c.id_estado
-                                            and c.nome = ?
-                                          order by c.capital desc, c.id",
-                             "findAllByUf"=>"select
-                                            c.id,
-                                            c.id_estado,
-                                            c.nome,
-                                            c.capital,
-                                            e.sigla as uf
-                                          from cidades c, estados e
-                                          where e.id    = c.id_estado
-                                            and e.sigla = ?
-                                          order by c.capital desc, c.id");
     
     public function __construct() {
         $this->dbconn = ADONewConnection(DRV_MYSQL);
@@ -60,7 +68,8 @@ class Cidade implements iCidade{
     
     public function exists($dados) {
         $SQL      = (object) $this->SQLText;
-        $dsCidade = $this->dbconn->Execute($SQL->findCity, array($dados["d"]["cidade"][0]["cidade"]));
+        $dsCidade = $this->dbconn->Execute(TQuerysCidade::getQuery("findCity"), 
+                                           array($dados["d"]["cidade"][0]["cidade"]));
         
         if ($dsCidade->RecordCount() > 0){
             $message = array("r"=>array("COD"=>"200", 
@@ -78,10 +87,10 @@ class Cidade implements iCidade{
     }
     
     public function find($dados, $toJson = true) {
-        $SQL   = (object) $this->SQLText;
         $rJson = (bool) $toJson;
         
-        $dsCidade = $this->dbconn->Execute($SQL->findCity, array($dados["d"]["cidade"][0]["cidade"]));
+        $dsCidade = $this->dbconn->Execute(TQuerysCidade::getQuery("findCity"), 
+                                           array($dados["d"]["cidade"][0]["cidade"]));
         
         if ($rJson){
             header("Content-type: application/json;charset=utf-8");
@@ -101,10 +110,10 @@ class Cidade implements iCidade{
     }
     
     public function findAllByUf($dados, $toJson = true) {
-        $SQL   = (object) $this->SQLText;
         $rJson = (bool) $toJson;
         
-        $dsCidade = $this->dbconn->Execute($SQL->findAllByUf, array($dados["d"]["estado"][0]["uf"]));
+        $dsCidade = $this->dbconn->Execute(TQuerysCidade::getQuery("findAllByUf"),
+                                           array($dados["d"]["estado"][0]["uf"]));
         
         if ($rJson){
             header("Content-type: application/json;charset=utf-8");

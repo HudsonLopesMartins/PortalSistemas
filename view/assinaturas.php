@@ -1,9 +1,9 @@
 <?php
-    include_once '../forms/TFormPeriodoAssinatura.php';
+    include_once './forms/TFormPeriodoAssinatura.php';
     
     $frmAssinatura = new TFormPeriodoAssinatura();
     $frmAssinatura->addJS("$(function() {"
-                        . "  var dados      = " . json_encode($_GET["dt2"]) . ";"
+                        . "  var dados      = " . $_GET["dt2"] . ";"
                         . "  var valorTotal = 0; "
                         
                         . "  function isEmpty(value){ "
@@ -45,12 +45,13 @@
 
                         . "     if (isOk == true){"
                         . "         if (confirm('O período de assinatura e o(s) sistema(s) escolhido(s) estão corretos?') == true){"
-                        . "             $.get('./view/cadastrologin.php', { dt3: dados }, function(rs){"
-                        . "                 $('#app').html(rs);"
-                        . "             })"
-                        . "             .fail(function(){"
-                        . "                 alert('Erro ao abrir formulário');"
-                        . "             });"
+                        . "             window.open('./index.php?v=cadastrologin&dt3=' + encodeURIComponent(JSON.stringify(dados)), '_self'); "
+                        //. "             $.get('./view/cadastrologin.php', { dt3: dados }, function(rs){"
+                        //. "                 $('#app').html(rs);"
+                        //. "             })"
+                        //. "             .fail(function(){"
+                        //. "                 alert('Erro ao abrir formulário');"
+                        //. "             });"
                         . "         }"
                         . "     }"
             

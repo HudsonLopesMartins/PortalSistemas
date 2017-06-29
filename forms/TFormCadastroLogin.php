@@ -6,17 +6,16 @@
  * @author hudsonmartins
  */
 
-include_once '../libs/interface/iFormsPage.inc.php';
+include_once './libs/interface/iFormsPage.inc.php';
 
-include_once '../libs/app.widgets/TPage.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapCommon.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapEdit.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanel.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGrid.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGridCell.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapButton.class.php';
-//include_once '../libs/app.widgets/bs/TBootstrapForm.class.php';
+include_once './libs/app.widgets/TPage.class.php';
+include_once './libs/app.widgets/bs/TBootstrapCommon.class.php';
+include_once './libs/app.widgets/bs/TBootstrapEdit.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanel.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGrid.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGridCell.class.php';
+include_once './libs/app.widgets/bs/TBootstrapButton.class.php';
 
 
 class TFormCadastroLogin extends TPage implements iFormsPage{
@@ -69,7 +68,6 @@ class TFormCadastroLogin extends TPage implements iFormsPage{
         $areaCadLogin->setWidth("col-md-6 col-md-offset-3");
         $areaCadLogin->addItem($panelLogin);
         
-        //$this->addItem("<br><br><br>");
         $this->addItem($areaCadLogin->show());
     }
 }

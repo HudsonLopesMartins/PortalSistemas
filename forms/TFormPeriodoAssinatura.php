@@ -5,26 +5,25 @@
  *
  * @author hudsonmartins
  */
-include_once '../include/config.inc.php';
-include_once '../include/message.inc.php';
+include_once './include/config.inc.php';
+include_once './include/message.inc.php';
 
-include_once '../libs/adodb5/adodb-exceptions.inc.php';
-require_once '../libs/adodb5/adodb.inc.php';
+include_once './libs/adodb5/adodb-exceptions.inc.php';
+require_once './libs/adodb5/adodb.inc.php';
 
-include_once '../class/Plano.class.php';
-include_once '../class/Sistemas.class.php';
+include_once './class/Plano.class.php';
+include_once './class/Sistemas.class.php';
     
-include_once '../libs/interface/iFormsPage.inc.php';
-
-include_once '../libs/app.widgets/TPage.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapCommon.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapEdit.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanel.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGrid.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGridCell.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapButton.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapSelect.class.php';
+include_once './libs/interface/iFormsPage.inc.php';
+include_once './libs/app.widgets/TPage.class.php';
+include_once './libs/app.widgets/bs/TBootstrapCommon.class.php';
+include_once './libs/app.widgets/bs/TBootstrapEdit.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanel.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGrid.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGridCell.class.php';
+include_once './libs/app.widgets/bs/TBootstrapButton.class.php';
+include_once './libs/app.widgets/bs/TBootstrapSelect.class.php';
 
 
 class TFormPeriodoAssinatura extends TPage implements iPage{

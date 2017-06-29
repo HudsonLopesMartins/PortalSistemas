@@ -118,12 +118,14 @@ $(function() {
     }
 
     getPosition();
-    
+   
+    /**
     $("#edtEmail").focusout(function(){
         if (!isEmail($(this).val())){
             alert("Aviso!\n" + "O Email informado não é válido.");
         }
     });
+    */
     
     $("#ddlTipoPessoa").change(function(){
         var tipo = $(this).val();
@@ -210,19 +212,21 @@ $(function() {
             }];
 
             if (confirm("Os dados informados estão corretos?") == true){
+                window.open("./index.php?v=assinaturas&dt2=" + encodeURIComponent(JSON.stringify(dados)), "_self");
+                /*
                 $.get('./view/assinaturas.php', { dt2: dados }, function(rs){
                     $('#app').html(rs);
                 })
                 .fail(function(){
                     alert('Erro ao abrir formulário');
                 });
+                */
             }
         }
     });
 
     $('#btnCancelar').click(function(){
         window.open('./', '_self');
-        //setPanelItem("formmapa");
     });
 
     $('#btnConsultarCEP').click(function(){

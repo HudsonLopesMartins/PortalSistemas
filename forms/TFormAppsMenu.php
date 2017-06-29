@@ -6,20 +6,20 @@
  * @author hudsonmartins
  */
 
-include_once '../include/config.inc.php';
-include_once '../include/message.inc.php';
+//include_once './include/config.inc.php';
+include_once './include/message.inc.php';
 
-include_once '../libs/adodb5/adodb-exceptions.inc.php';
-require_once '../libs/adodb5/adodb.inc.php';
+//include_once './libs/adodb5/adodb-exceptions.inc.php';
+require_once './libs/adodb5/adodb.inc.php';
 
-include_once '../class/Plano.class.php';
-include_once '../class/Sistemas.class.php';
+//include_once './class/Plano.class.php';
+include_once './class/Sistemas.class.php';
 
-include_once '../libs/app.widgets/TPage.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapCommon.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanel.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGrid.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGridCell.class.php';
+include_once './libs/app.widgets/TPage.class.php';
+include_once './libs/app.widgets/bs/TBootstrapCommon.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanel.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGrid.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGridCell.class.php';
 
 class TFormAppsMenu extends TPage implements iPage {
     public function prepare($dados) {
@@ -28,7 +28,7 @@ class TFormAppsMenu extends TPage implements iPage {
         $s = (object) (new Sistemas)->findAppByEmp($dados, false);
         $lstMenu = "<div class='list-group'>";
         for($i = 0; $i < count($s->r); $i++){
-            $lstMenu .= "<a href='#' class='list-group-item' appid='" . $s->r[$i]["id"] . "' appidemp='" . $s->r[$i]["id_empresa"] . "'>" . $s->r[$i]["sistema"] . "</a>";
+            $lstMenu .= "<a href='#' class='list-group-item openapp' appid='" . $s->r[$i]["id"] . "' appidemp='" . $s->r[$i]["id_empresa"] . "'>" . $s->r[$i]["sistema"] . "</a>";
         }
         $lstMenu .= "</div>";
         
