@@ -25,7 +25,7 @@ class TPage implements iPage{
     }
     
     public function addFileCSS($file) {
-            $this->fCS[] = "<link href='{$file}' rel='stylesheet'></script>";
+            $this->fCS[] = "<link href='{$file}' rel='stylesheet'>";
     }
 
     protected function addItem($item){
@@ -51,6 +51,6 @@ class TPage implements iPage{
     }
 
     public function open(){
-            echo $this->p;
+        echo $this->p;
     }
 }

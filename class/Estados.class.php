@@ -10,32 +10,50 @@
 interface iEstados {
     public function getVersion();
     public function getAll($toJson = true);
+    public function getAllOrdBySigla($toJson = true);
     public function find($dados, $toJson = true);
     public function exists($dados);
+}
+
+final class TQuerysEstados {
+    function __construct() {}
+    public static function getQuery($queryname) {
+        $query["findAll"] = "select 
+                               estados.id,
+                               estados.estado,
+                               estados.sigla,
+                               estados.capital,
+                               regiao.regiao
+                             from estados, regiao
+                             where regiao.id = estados.id_regiao
+                             order by estados.id_regiao, estados.id";
+        $query["findAllOrdBySigla"] = "select 
+                               estados.id,
+                               estados.estado,
+                               estados.sigla,
+                               estados.capital,
+                               regiao.regiao
+                             from estados, regiao
+                             where regiao.id = estados.id_regiao
+                             order by estados.sigla";
+        $query["find"] = "select 
+                            estados.id,
+                            estados.estado,
+                            estados.sigla,
+                            estados.capital,
+                            regiao.regiao
+                          from estados, regiao
+                          where regiao.id = estados.id_regiao
+                            and estados.sigla = ?
+                          order by estados.id_regiao, estados.id";
+        
+        return $query[$queryname];
+    }
 }
 
 class Estados implements iEstados {
     private $sVersion       = "0.0.1";
     private $dbconn         = null;
-    private $SQLText = array("findAll"=>"select 
-                                           estados.id,
-                                           estados.estado,
-                                           estados.sigla,
-                                           estados.capital,
-                                           regiao.regiao
-                                         from estados, regiao
-                                         where regiao.id = estados.id_regiao
-                                         order by estados.id_regiao, estados.id",
-                             "find"   =>"select 
-                                           estados.id,
-                                           estados.estado,
-                                           estados.sigla,
-                                           estados.capital,
-                                           regiao.regiao
-                                         from estados, regiao
-                                         where regiao.id = estados.id_regiao
-                                           and estados.sigla = ?
-                                         order by estados.id_regiao, estados.id");
     
     public function __construct() {
         $this->dbconn = ADONewConnection(DRV_MYSQL);
@@ -57,10 +75,9 @@ class Estados implements iEstados {
     }
     
     public function getAll($toJson = true) {
-        $SQL   = (object) $this->SQLText;
         $rJson = (bool) $toJson;
         
-        $dsUf = $this->dbconn->Execute($SQL->findAll);
+        $dsUf = $this->dbconn->Execute(TQuerysEstados::getQuery("findAll"));
         
         if ($rJson){
             header("Content-type: application/json;charset=utf-8");
@@ -75,11 +92,28 @@ class Estados implements iEstados {
         $dsUf->Close();
     }
     
-    public function find($dados, $toJson = true) {
-        $SQL   = (object) $this->SQLText;
+    public function getAllOrdBySigla($toJson = true) {
         $rJson = (bool) $toJson;
         
-        $dsUf = $this->dbconn->Execute($SQL->find, array($dados["d"]["estado"][0]["uf"]));
+        $dsUf = $this->dbconn->Execute(TQuerysEstados::getQuery("findAllOrdBySigla"));
+        if ($rJson){
+            header("Content-type: application/json;charset=utf-8");
+            if ($dsUf->RecordCount() > 0){
+                echo TGetJSON::getJSONData("r", $dsUf->GetArray());
+            }
+            else {
+                $message = array("r" => array("COD"=>"201", "MSG"=> htmlspecialchars($GLOBALS['message'][201])));
+                echo TGetJSON::getJSON("r", $message);
+            }
+        }
+        $dsUf->Close();
+    }
+    
+    public function find($dados, $toJson = true) {
+        $rJson = (bool) $toJson;
+        
+        $dsUf = $this->dbconn->Execute(TQuerysEstados::getQuery("find"), 
+                                       array($dados["d"]["estado"][0]["uf"]));
         
         if ($rJson){
             header("Content-type: application/json;charset=utf-8");
@@ -95,8 +129,8 @@ class Estados implements iEstados {
     }
     
     public function exists($dados) {
-        $SQL  = (object) $this->SQLText;
-        $dsUf = $this->dbconn->Execute($SQL->find, array($dados["d"]["endereco"][0]["uf"]));
+        $dsUf = $this->dbconn->Execute(TQuerysEstados::getQuery("find"),
+                                       array($dados["d"]["endereco"][0]["uf"]));
         
         if ($dsUf->RecordCount() > 0){
             $message = array("r" => array("COD"=> "200", 

@@ -1,13 +1,13 @@
 <?php
 
-include_once '../libs/app.widgets/bs/TBootstrapCommon.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapEdit.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanel.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGrid.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapGridCell.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapButton.class.php';
-include_once '../libs/app.widgets/bs/TBootstrapForm.class.php';
+include_once './libs/app.widgets/bs/TBootstrapCommon.class.php';
+include_once './libs/app.widgets/bs/TBootstrapEdit.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanel.class.php';
+include_once './libs/app.widgets/bs/TBootstrapPanelFooter.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGrid.class.php';
+include_once './libs/app.widgets/bs/TBootstrapGridCell.class.php';
+include_once './libs/app.widgets/bs/TBootstrapButton.class.php';
+include_once './libs/app.widgets/bs/TBootstrapForm.class.php';
 
 interface iFormNovaSenha {
     public function addFileJS($file);

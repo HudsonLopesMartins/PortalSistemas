@@ -6,12 +6,16 @@
  */
 
 interface iGetJSON {
+    public static function getVersion();
     public static function getJSON($nameResult, $data = array());
     public static function getJSONData($nameResult, $data = array());
     public static function toJSON($code, $message);
 }
 
 class TGetJSON implements iGetJSON {
+    public static function getVersion() {
+        echo json_encode(array("versão" => "0.0.1"));
+    }
     /**
      * 
      * @param string $nameResult

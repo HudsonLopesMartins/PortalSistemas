@@ -10,8 +10,8 @@
 interface iUsuario {
     public function getVersion();
     public function inserir($dados, $toJson = true);
-    public function findEmailToLogin($dados, $toJson = true);
-    public function findUserByEmp($dados, $toJson = true);
+    public function localizarEmpresasUsuario($dados, $toJson = true);
+    public function localizarDadosLogin($dados, $toJson = true);
     public function findUsersByEmp($dados, $toJson = true);
     public function findBySession($dados, $toJson = true);
     public function inserirLogAcesso($dados, $toJson = true);
@@ -19,6 +19,49 @@ interface iUsuario {
     public function findUserByEmail($dados, $toJson = true);
     public function changePwd($dados, $toJson = true);
     public function viewDetalhesUsuario($dados, $toJson = true);
+    public function editarDetalhesUsuario($dados, $toJson = true);
+}
+
+final class TQuerysUsuario {
+    function __construct() {}
+    public static function getQuery($queryname) {
+        $query["localizarEmpresasUsuario"] = "select 
+                                                u.id, u.id_empresa, u.id_grupo,
+                                                u.email, u.nome, e.nomefantasia
+                                              from usuario u, empresa e
+                                              where e.id    = u.id_empresa
+                                                and u.email = ? 
+                                                and u.pass  = ?";
+        $query["localizarDadosLogin"] = "select
+                                                u.id, u.id_empresa, u.id_grupo,
+                                                u.email, u.nome, u.chpwd as mdsnh, 
+                                                u.ativo, g.nome as grupo,
+                                                e.razaosocial, e.nomefantasia,
+                                                e.lat, e.lng, u.tipo
+                                              from usuario u, empresa e, grupoacesso g
+                                              where e.id         = u.id_empresa
+                                                and e.ativo      = 0
+                                                and g.id         = u.id_grupo
+                                                and g.ativo      = 1
+                                                and u.email      = ?
+                                                and u.pass       = ?
+                                                and u.id_empresa = ?
+                                                and u.ativo      = 1";
+        
+        $query["viewDetalhesUsuario"] = "select
+                                                id_empresa, id_grupo, id_usuario, id_dadousuario,
+                                                id_endereco, id_cidade, id_uf, grupo,
+                                                email_usuario, nome_usuario, ramal, nome_completo,
+                                                cpf, endereco, numero, complemento, bairro,
+                                                email_pessoal, lat, lng, cep,
+                                                nome_cidade, sigla, tipo,
+                                                datacadastro, ativo, is_adm
+                                              from vwdetalheusuario
+                                              where id_empresa = ?
+                                                and id_usuario = ?";
+        
+        return $query[$queryname];
+    }
 }
 
 class DMUsuario extends ADODB_Active_Record {
@@ -28,41 +71,7 @@ class DMUsuario extends ADODB_Active_Record {
 class Usuario extends DMUsuario implements iUsuario{
     private $sVersion = "0.0.1";
     private $dbconn  = null;
-    private $SQLText = array("findEmailToLogin"=>"select
-                                             u.id,
-                                             u.id_empresa,
-                                             u.id_grupo,
-                                             u.email,
-                                             u.nome,
-                                             e.nomefantasia
-                                           from usuario u, empresa e
-                                           where e.id    = u.id_empresa
-                                             and u.email = ? 
-                                             and u.pass  = ?",
-                             "findUserByEmp"=>"select
-                                                  u.id, 
-                                                  u.id_empresa, 
-                                                  u.id_grupo,
-                                                  u.email,
-                                                  u.nome,
-                                                  u.chpwd as mdsnh, 
-                                                  u.ativo,
-                                                  g.nome as grupo,
-                                                  e.razaosocial,
-                                                  e.nomefantasia,
-                                                  e.lat,
-                                                  e.lng,
-                                                  u.tipo
-                                                from usuario u, empresa e, grupoacesso g
-                                                where e.id         = u.id_empresa
-                                                  and e.ativo      = 0
-                                                  and g.id         = u.id_grupo
-                                                  and g.ativo      = 1
-                                                  and u.email      = ?
-                                                  and u.pass       = ?
-                                                  and u.id_empresa = ?
-                                                  and u.ativo      = 1",
-                             "findUsersByEmp"=>"select
+    private $SQLText = array("findUsersByEmp"=>"select
                                                   u.id as id_usuario, 
                                                   u.id_grupo,
                                                   u.id_empresa, 
@@ -74,6 +83,7 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   e.lat,
                                                   e.lng,
                                                   u.chpwd as mdsnh, 
+                                                  u.tipo,
                                                   u.ativo
                                                 from usuario u, empresa e, grupoacesso g
                                                 where e.id         = u.id_empresa
@@ -82,36 +92,6 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   and g.ativo      = 1
                                                   and u.id_empresa = ?
                                                   and u.ativo      = ?",
-                             "viewDetalhesUsuario"=>"select
-                                                  id_empresa,
-                                                  id_grupo,
-                                                  id_usuario,
-                                                  id_dadousuario,
-                                                  id_endereco,
-                                                  id_cidade,
-                                                  id_uf,
-                                                  grupo,
-                                                  email_usuario,
-                                                  nome_usuario,
-                                                  ramal,
-                                                  cpf,
-                                                  endereco,
-                                                  numero,
-                                                  complemento,
-                                                  bairro,
-                                                  email_pessoal,
-                                                  lat,
-                                                  lng,
-                                                  cep,
-                                                  nome_cidade,
-                                                  sigla,
-                                                  tipo,
-                                                  datacadastro,
-                                                  ativo,
-                                                  is_adm
-                                                from vwdetalheusuario
-                                                where id_empresa = ?
-                                                  and id_usuario = ?",
                              "findByLogin"=>"select
                                                  u.id as id_usuario, 
                                                  e.id as id_empresa, 
@@ -158,7 +138,7 @@ class Usuario extends DMUsuario implements iUsuario{
         $this->dbconn->Connect(DSN_MYSQL, UID_MYSQL, PWD_MYSQL, DBN_MYSQL);
         $this->dbconn->SetFetchMode(ADODB_FETCH_ASSOC);
         $this->dbconn->debug = false;
-        //$this->dbconn->execute("set names 'utf8'");       
+        $this->dbconn->execute("set names 'utf8'");       
         /**
          * ADODB_FETCH_NUM: $resultSet->fields[0]
          * ADODB_FETCH_ASSOC: $resultSet->fields['COLUNA']
@@ -207,10 +187,8 @@ class Usuario extends DMUsuario implements iUsuario{
         }
     }
     
-    public function findEmailToLogin($dados, $toJson = true) {
-        $SQL    = (object) $this->SQLText;
+    public function localizarEmpresasUsuario($dados, $toJson = true) {
         $rJson  = (bool) $toJson;
-        
         /**
          * isMd5: 0 - Ira criptogafar dentro da classe.
          *        1 - Já vem criptografada.
@@ -228,7 +206,7 @@ class Usuario extends DMUsuario implements iUsuario{
         }        
         
         try {
-            $dsUsuario = $this->dbconn->Execute($SQL->findEmailToLogin, array($sEmail, $sPass));
+            $dsUsuario = $this->dbconn->Execute(TQuerysUsuario::getQuery("localizarEmpresasUsuario"), array($sEmail, $sPass));
             if ($rJson){
                 header("Content-type: application/json;charset=utf-8");
                 if ($dsUsuario->RecordCount() > 0){
@@ -247,8 +225,7 @@ class Usuario extends DMUsuario implements iUsuario{
         }
     }
 
-    public function findUserByEmp($dados, $toJson = true) {
-        $SQL    = (object) $this->SQLText;
+    public function localizarDadosLogin($dados, $toJson = true) {
         $rJson  = (bool) $toJson;
         
         /**
@@ -269,7 +246,7 @@ class Usuario extends DMUsuario implements iUsuario{
         }        
         
         try {
-            $dsUsuario = $this->dbconn->Execute($SQL->findUserByEmp, array($sEmail, $sPass, $sIdEmp));
+            $dsUsuario = $this->dbconn->Execute(TQuerysUsuario::getQuery("localizarDadosLogin"), array($sEmail, $sPass, $sIdEmp));
             if ($rJson){
                 header("Content-type: application/json;charset=utf-8");
                 if ($dsUsuario->RecordCount() > 0){
@@ -587,12 +564,14 @@ class Usuario extends DMUsuario implements iUsuario{
         $rJson  = (bool) $toJson;
 
         try {
-            $dsDetalheUsuario = $this->dbconn->Execute($SQL->viewDetalhesUsuario, array($dados["d"]["empresa"][0]["id"], 
-                                                                                        $dados["d"]["usuario"][0]["id"]));
+            $dsDetalheUsuario = $this->dbconn->Execute(TQuerysUsuario::getQuery("viewDetalhesUsuario"), 
+                                                       array($dados["d"]["empresa"][0]["id"], 
+                                                             $dados["d"]["usuario"][0]["id"]));
             if ($rJson){
                 header("Content-type: application/json;charset=utf-8");
                 if ($dsDetalheUsuario->RecordCount() > 0){
                     echo TGetJSON::getJSONData("r", $dsDetalheUsuario->GetArray());
+                    //print_r($dsDetalheUsuario->GetArray());
                 }
                 else {
                     $messageError = array("COD"=>"201", "MSG"=>htmlspecialchars($GLOBALS['message'][201]));
@@ -614,6 +593,58 @@ class Usuario extends DMUsuario implements iUsuario{
         } catch (exception $exc) {
             header("Content-type: application/json;charset=utf-8");
             echo json_encode($exc);
+        }
+    }
+    
+    public function editarDetalhesUsuario($dados, $toJson = true) {
+        $rJson     = (bool) $toJson;
+        $whereSQL  = "id = {$dados["d"]["dadosusuario"][0]["id"]} and id_empresa = {$dados["d"]["empresa"][0]["id"]}";
+        $whereSQLu = "id = {$dados["d"]["usuario"][0]["id"]} and id_empresa = {$dados["d"]["empresa"][0]["id"]}";
+
+        try {
+            $c = (object) (new Cep)->exists($dados);
+            if ($c->r["COD"] == "200"){
+                $idCep = $c->r["ID"];
+                $cep   = $c->r["CEP"];
+            }
+            else {
+                $insC = (object) (new Cep)->inserir($dados);
+                $idCep = $insC->r["ID"];
+                $cep   = $insC->r["CEP"];
+            }
+            $fieldValue["id_endereco"]   = $idCep;
+            $fieldValue["cep_endereco"]  = $cep;            
+            $fieldValue["nome"]          = $dados["d"]["dadosusuario"][0]["nome"];
+            $fieldValue["cpf"]           = $dados["d"]["dadosusuario"][0]["cpf"];
+            $fieldValue["numero"]        = $dados["d"]["dadosusuario"][0]["numero"];
+            $fieldValue["complemento"]   = $dados["d"]["dadosusuario"][0]["complemento"];
+            $fieldValue["email"]         = $dados["d"]["dadosusuario"][0]["emailpessoal"];
+            $fieldValue["lat"]           = $dados["d"]["dadosusuario"][0]["lat"];
+            $fieldValue["lng"]           = $dados["d"]["dadosusuario"][0]["lng"];
+            $fieldValue["dataalteracao"] = date("Y/m/d");
+            
+            $ok = $this->dbconn->AutoExecute("dadosusuario", $fieldValue, "UPDATE", $whereSQL);
+
+            if ($rJson){
+                if ($ok){
+                    $uFieldValue["nome"] = $dados["d"]["usuario"][0]["nome"];
+                    $this->dbconn->AutoExecute("usuario", $uFieldValue, "UPDATE", $whereSQLu);
+                    
+                    header("Content-type: application/json;charset=utf-8");
+                    $message = array("COD"=>"203", "MSG"=> htmlspecialchars($GLOBALS['message'][203]));
+                    echo TGetJSON::getJSON("r", $message);
+                }
+                else {
+                    header("Content-type: application/json;charset=utf-8");
+                    $message = array("COD"=>"403", "MSG"=> htmlspecialchars($GLOBALS['message'][403]));
+                    echo TGetJSON::getJSON("r", $message);
+                }
+            }
+            $this->dbconn->Close();
+        } catch (exception $e) {
+            header("Content-type: application/json;charset=utf-8");
+            echo TGetJSON::getJSON("r", $e->getMessage());
+            //echo json_encode($e);
         }
     }
 }
