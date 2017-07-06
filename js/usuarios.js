@@ -1,8 +1,10 @@
 $(function() {
-    var itemIndex      = 0;
-    var panelIndex     = [
+    var windowMap;
+    var itemIndex  = 0;
+    var panelIndex = [
         "formlistausuarios",
-        "formdetalhesusuario"
+        "formdetalhesusuario",
+        "formloginusuario"
     ];
     
     var allEditsFormUsuario = $([]).add($("#edtNome"))
@@ -14,7 +16,11 @@ $(function() {
                                    .add($("#edtCEP"))
                                    .add($("#edtCidade"))
                                    .add($("#edtUF"))
-                                   .add($("#edtEmailPessoal"));
+                                   .add($("#edtEmailPessoal"))
+                                   .add($("#edtEmailLogin"))
+                                   .add($("#edtSenhaAntiga"))
+                                   .add($("#edtNovaSenha"))
+                                   .add($("#edtCheckSenha"));
     var allHiddenFormUsuario = $([]).add($("#hdIDGrp"))
                                     .add($("#hdIDu"))
                                     .add($("#hdIDDUs"))
@@ -89,6 +95,9 @@ $(function() {
             id = parseInt(selectid);
         }
         
+        $("#ddlCidade").empty();
+        $("#ddlCidade").append($("<option>", {value: "0", text: "Aguarde, carregando a lista de Cidades"}));
+        
         var dados = [{
                 'd':{
                     'estado': [{
@@ -123,6 +132,54 @@ $(function() {
                       'Error Type: ' + error;
             alert(msg);
         });
+    }
+    
+    function carregarGruposLogin(idemp, selectid){
+        var id = 0;
+        if(selectid !== 0){
+            id = parseInt(selectid);
+        }
+        
+        $("#ddlGrupoLogin").empty();
+        $("#ddlGrupoLogin").append($("<option>", {value: "0", text: "Aguarde, carregando a lista dos Grupos"}));
+        
+        var dados = [{
+                'd':{
+                    'estado': [{
+                            'uf': idemp
+                    }]
+                },
+                'toJson': true
+            }];
+        /**
+         * 
+        $.post('./include/TJson.class.php', ({
+                                                className: 'Cidade',
+                                                methodName: 'findAllByUf',
+                                                params: dados
+                                            }), 
+        function(rs){
+            if (rs.r[0].COD === '201'){
+                alert('AVISO: ' + rs.r[0].MSG);
+            }
+            else {
+                $("#ddlGrupoLogin").empty();
+                $("#ddlGrupoLogin").append($("<option>", {value: "0", text: "Selecione um Grupo"}));
+                $.each(rs.r, function(idx, value){
+                    $("#ddlGrupoLogin").append($("<option>", {value: value.id, text: value.nome}));
+                });
+                $("#ddlGrupoLogin").val(id);
+            }
+        }, 'json')
+        .fail(function(jqXHR, status, error){
+            var msg = 'Erro ao carregar Registros!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
+                      'Error Type: ' + error;
+            alert(msg);
+        });
+        */
     }
     
     function detalhesUsuario(ide, idu){
@@ -185,6 +242,8 @@ $(function() {
                     $("#hdLng").val(rs.r[0].lng);
                     $("#hdIBGE").val(rs.r[0].ibge);
                     
+                    $("#hdFormState").val("e");
+                    
                     $("#ddlUF").val(rs.r[0].id_uf);
                     carregarCidades($("#ddlUF option:selected").text(), rs.r[0].id_cidade);
                 }
@@ -204,6 +263,57 @@ $(function() {
         //            "&idu=" + idu, "_blank", "toolbar=0,titlebar=0,menubar=0,width=1000,height=600");
     }
     
+    function loginUsuario(ide, idu){
+
+        var dados = [{
+            'd': {
+                'empresa': [{
+                    'id': ide
+                }],
+                'usuario': [{
+                    'id': idu
+                }]
+            }
+        }];
+    
+        setPanelItem("formloginusuario");
+        
+        $("#dlgStatusLogin").show();
+        var messageWait = function(){
+            return $("#dlgStatusLogin").fadeIn(3000).delay(3000).fadeOut();
+        };
+        $.when(messageWait()).done(function(){
+            $.post("./include/TJson.class.php", ({
+                                                    className: "Usuario",
+                                                    methodName: "viewDetalhesUsuario",
+                                                    params: dados
+                                                }), 
+            function(rs){
+                if (rs.r[0].COD === "201"){
+                    alert("AVISO: " + rs.r[0].MSG);
+                }
+                else {
+                    $("#edtEmailLogin").val(rs.r[0].email_usuario);
+                    $("#hdIDGrp").val(rs.r[0].id_grupo);
+                    $("#hdIDu").val(rs.r[0].id_usuario);
+                    
+                    carregarGruposLogin(0, 0);
+                    
+                    $("#hdFormState").val("e");
+                }
+            }, "json")
+            .fail(function(jqXHR, status, error){
+                var msg = "Erro ao carregar Registros!\r\n" + 
+                          "- Mensagens \r\n" +
+                          "XHR: " + jqXHR.reponseXML + "\r\n" + 
+                          "Status: " + status + "\r\n" +
+                          "Error Type: " + error;
+                alert(msg);
+            });
+
+        });
+    }
+    
     carregarUF();
     
     $(document).on('click', '.view', function(){
@@ -217,15 +327,12 @@ $(function() {
         //setPanelItem("formcategoria");
     });
     
-    $(document).on('click', '.edit', function(){
+    $(document).on('click', '.login', function(){
         var idE = $(this).attr("ide");
         var idU = $(this).attr("idu");
         
-        allEditsFormUsuario.val("");
-        allHiddenFormUsuario.val("");
-        
-        detalhesUsuario(idE, idU);
-        //setPanelItem("formcategoria");
+        loginUsuario(idE, idU);
+        //setPanelItem("formloginusuario");
     });
 
     $('#btnFechar').click(function(){
@@ -243,6 +350,10 @@ $(function() {
     $("#btnFecharDetalhes").click(function(){
         allEditsFormUsuario.val("");
         allHiddenFormUsuario.val("");
+        setPanelItem("formlistausuarios");
+    });
+    
+    $("#btnFecharLoginUsuario").click(function(){
         setPanelItem("formlistausuarios");
     });
 
@@ -275,7 +386,7 @@ $(function() {
                         var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
                                         "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='login'>" + 
                                         "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
                                         "<a href='#' title='Desbloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'>" + 
@@ -288,7 +399,7 @@ $(function() {
                         var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
                                         "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='login'>" + 
                                         "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
                                         "<a href='#' title='Desbloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='unlock'>" + 
@@ -346,7 +457,7 @@ $(function() {
                         var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
                                         "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='login'>" + 
                                         "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
                                         "<a href='#' title='Bloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'>" + 
@@ -359,7 +470,7 @@ $(function() {
                         var controles = "<a href='#' title='Vizualizar os Detalhes' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='view'>" + 
                                         "<i class='fa fa-address-book' aria-hidden='true'></i></span></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='edit'>" + 
+                                        "<a href='#' title='Vizualizar dados do Login' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='login'>" + 
                                         "<i class='fa fa-key' aria-hidden='true'></i></a>" + 
                                         "&nbsp;&nbsp;&nbsp;&nbsp;" +
                                         "<a href='#' title='Bloquear Usuário' ide='" + value.id_empresa + "' idu='" + value.id_usuario + "' class='lock'>" + 
@@ -379,10 +490,10 @@ $(function() {
             }
         }, 'json')
         .fail(function(jqXHR, status, error){
-            var msg = 'Erro ao carregar Registros!\r\n' + 
-                      '- Mensagens \r\n' +
-                      'XHR: ' + jqXHR.reponseXML + '\r\n' + 
-                      'Status: ' + status + '\r\n' +
+            var msg = 'Erro ao carregar Registros!\r' + 
+                      '- Mensagens \r' +
+                      'XHR: ' + jqXHR.reponseXML + '\r' + 
+                      'Status: ' + status + '\r' +
                       'Error Type: ' + error;
             alert(msg);
         });
@@ -402,6 +513,7 @@ $(function() {
     });
     
     $("#btnSalvarDetalhes").click(function(){
+        var state = $("#hdFormState").val();
         var dados = [{
             'd': {
                 'empresa': [{
@@ -433,23 +545,27 @@ $(function() {
                 }]
             }
         }];
-
-        $.post('./include/TJson.class.php', ({
-                                                className: 'Usuario',
-                                                methodName: 'editarDetalhesUsuario',
-                                                params: dados
-                                            }), 
-        function(rs){
-            alert(rs.r[0].MSG);
-        }, 'json')
-        .fail(function(jqXHR, status, error){
-            var msg = 'Erro ao Editar Registro!\r' + 
-                      '- Mensagens \r' +
-                      'XHR: ' + jqXHR.reponseXML + '\r' + 
-                      'Status: ' + status + '\r' +
-                      'Error Type: ' + error;
-            alert(msg);
-        });
+    
+        //window.open("./index.php?v=assinaturas&dt2=" + encodeURIComponent(JSON.stringify(dados)), "_self", "width=600,height=300");
+        if (state === "e"){
+            $.post('./include/TJson.class.php', ({
+                                                    className: 'Usuario',
+                                                    methodName: 'editarDetalhesUsuario',
+                                                    params: dados
+                                                }), 
+            function(rs){
+                $("#hdFormState").val("i");
+                alert(rs.r[0].MSG);
+            }, 'json')
+            .fail(function(jqXHR, status, error){
+                var msg = 'Erro ao Editar Registro!\r' + 
+                          '- Mensagens \r' +
+                          'XHR: ' + jqXHR.reponseXML + '\r' + 
+                          'Status: ' + status + '\r' +
+                          'Error Type: ' + error;
+                alert(msg);
+            });
+        }
     });
     
     $('#btnConsultarCEP').click(function(){
@@ -490,5 +606,21 @@ $(function() {
         var c = $("#ddlCidade option:selected").text();
         $("#hdIDCid").val($("#ddlCidade option:selected").val());
         $("#edtCidade").val(c);
+    });
+    
+    $("#btnTeste").click(function(){
+        windowMap = window.open("", "myWindow", "width=600,height=300");
+        windowMap.document.write("<button type='button' onclick='window.close(); document.getElementById(\"btnFecharJanela\").value = document.getElementById(\"firstname\").value)'>Click Me!</button>");
+        windowMap.document.write("<input type='text' id='firstname'>");
+        
+        //var t = windowMap.parent.document.getElementById("firstname");
+        //alert(t.value);
+    });
+
+    $("#btnFecharJanela").click(function(){
+        var t = windowMap.parent.document.getElementById("firstname");
+        alert(t.value);
+        
+        windowMap.close();
     });
 });

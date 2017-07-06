@@ -235,9 +235,12 @@ class Empresa extends DMEmpresa implements iEmpresa{
                     $dsValidadePlano->datacadastro = date('Y-m-d'); //date("Y/m/d H:i:s");
                     $dsValidadePlano->Save();
                     
-                    /**
-                     * @todo Criar a classe com a função de captura do ultimo registro para a empresa informada
-                     */
+                    $dsGrupoUsuario = new DMEmpresa("grupoacesso");
+                    $dsGrupoUsuario->id_empresa = $id_empresa;
+                    $dsGrupoUsuario->nome       = "Inativo";
+                    $dsGrupoUsuario->ativo      = true;
+                    $dsGrupoUsuario->Save();
+                    
                     $dsGrupoUsuario = new DMEmpresa("grupoacesso");
                     $dsGrupoUsuario->id_empresa = $id_empresa;
                     $dsGrupoUsuario->nome       = "Administrador";

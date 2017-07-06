@@ -125,7 +125,7 @@ else {
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#" id="aEmp">Empresa: <?php echo $nfantasia; ?></a></li>
-                        <li><a href="#" id="aUser">Usuário: <?php echo $nusuario; ?></a></li>
+                        <li><a href="#" id="aUser"><span class="glyphicon glyphicon-user"></span> <?php echo $nusuario; ?></a></li>
                         <li class="dropdown" id="lnkGerenciamento">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Gerenciamento <span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -141,7 +141,7 @@ else {
                                 -->
                             </ul>
                         </li>
-                        <li><a href="#" id="aLogoff">Efetuar Logoff</a></li>
+                        <li><a href="#" id="aLogoff"><span class="glyphicon glyphicon-log-out"></span> Logoff</a></li>
                     </ul>
                 </div>
             </div>
