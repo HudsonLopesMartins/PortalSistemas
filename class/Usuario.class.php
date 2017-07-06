@@ -60,18 +60,7 @@ final class TQuerysUsuario {
                                               where id_empresa = ?
                                                 and id_usuario = ?";
         
-        return $query[$queryname];
-    }
-}
-
-class DMUsuario extends ADODB_Active_Record {
-    
-}
-
-class Usuario extends DMUsuario implements iUsuario{
-    private $sVersion = "0.0.1";
-    private $dbconn  = null;
-    private $SQLText = array("findUsersByEmp"=>"select
+        $query["findUsersByEmp"]      = "select
                                                   u.id as id_usuario, 
                                                   u.id_grupo,
                                                   u.id_empresa, 
@@ -91,8 +80,20 @@ class Usuario extends DMUsuario implements iUsuario{
                                                   and g.id         = u.id_grupo
                                                   and g.ativo      = 1
                                                   and u.id_empresa = ?
-                                                  and u.ativo      = ?",
-                             "findByLogin"=>"select
+                                                  and u.ativo      = ?";
+        
+        return $query[$queryname];
+    }
+}
+
+class DMUsuario extends ADODB_Active_Record {
+    
+}
+
+class Usuario extends DMUsuario implements iUsuario{
+    private $sVersion = "0.0.1";
+    private $dbconn  = null;
+    private $SQLText = array("findByLogin"=>"select
                                                  u.id as id_usuario, 
                                                  e.id as id_empresa, 
                                                  e.id_endereco,
@@ -160,14 +161,16 @@ class Usuario extends DMUsuario implements iUsuario{
              * baseada na conexão setada na linha: ADODB_Active_Record::SetDatabaseAdapter($this->dbconn);
              */
             $dsUsuario = new DMUsuario("usuario");
-            $dsUsuario->id_empresa    = $dados["usuario"]["id_empresa"];
-            $dsUsuario->email         = $dados["usuario"]["email"];
-            $dsUsuario->login         = $dados["usuario"]["login"];
-            $dsUsuario->senha         = md5($dados["usuario"]["senha"]);
-            $dsUsuario->ativo         = true;
-            $dsUsuario->administrador = true;
-            $dsUsuario->chpwd         = false;
-            $dsUsuario->data_cadastro = date('Y-m-d'); //date("Y/m/d H:i:s");
+            $dsUsuario->id_empresa   = $dados["d"]["empresa"][0]["id"];
+            $dsUsuario->id_grupo     = $dados["d"]["grupoacesso"][0]["id"]; // Aqui deverá ser sempre o id do grupo inativo
+            $dsUsuario->email        = $dados["d"]["dadosusuario"][0]["emailpessoal"];
+            $dsUsuario->pass         = "";
+            $dsUsuario->nome         = $dados["d"]["dadosusuario"][0]["nome"];;
+            $dsUsuario->tipo         = "DFLT";
+            $dsUsuario->chpwd        = 1;
+            $dsUsuario->datacadastro = date('Y-m-d');
+            $dsUsuario->ativo        = 0;
+            $dsUsuario->Save();
 
             $ok = $dsUsuario->Save();
             if ($rJson){
@@ -266,7 +269,6 @@ class Usuario extends DMUsuario implements iUsuario{
     }
     
     public function findUsersByEmp($dados, $toJson = true) {
-        $SQL    = (object) $this->SQLText;
         $rJson  = (bool) $toJson;
 
         try {
@@ -276,8 +278,9 @@ class Usuario extends DMUsuario implements iUsuario{
             else {
                 $ativo = 1;
             }
-            $dsUsuario = $this->dbconn->Execute($SQL->findUsersByEmp, array($dados["d"]["empresa"][0]["id"], 
-                                                                            $ativo));
+            $dsUsuario = $this->dbconn->Execute(TQuerysUsuario::getQuery("findUsersByEmp"), 
+                                                array($dados["d"]["empresa"][0]["id"], 
+                                                      $ativo));
             if ($rJson){
                 header("Content-type: application/json;charset=utf-8");
                 if ($dsUsuario->RecordCount() > 0){
@@ -560,7 +563,6 @@ class Usuario extends DMUsuario implements iUsuario{
     }
     
     public function viewDetalhesUsuario($dados, $toJson = true) {
-        $SQL    = (object) $this->SQLText;
         $rJson  = (bool) $toJson;
 
         try {
@@ -598,6 +600,8 @@ class Usuario extends DMUsuario implements iUsuario{
     
     public function editarDetalhesUsuario($dados, $toJson = true) {
         $rJson     = (bool) $toJson;
+        $idCep     = 0;
+        $cep       = 0;
         $whereSQL  = "id = {$dados["d"]["dadosusuario"][0]["id"]} and id_empresa = {$dados["d"]["empresa"][0]["id"]}";
         $whereSQLu = "id = {$dados["d"]["usuario"][0]["id"]} and id_empresa = {$dados["d"]["empresa"][0]["id"]}";
 
@@ -612,6 +616,7 @@ class Usuario extends DMUsuario implements iUsuario{
                 $idCep = $insC->r["ID"];
                 $cep   = $insC->r["CEP"];
             }
+            
             $fieldValue["id_endereco"]   = $idCep;
             $fieldValue["cep_endereco"]  = $cep;            
             $fieldValue["nome"]          = $dados["d"]["dadosusuario"][0]["nome"];
@@ -644,7 +649,6 @@ class Usuario extends DMUsuario implements iUsuario{
         } catch (exception $e) {
             header("Content-type: application/json;charset=utf-8");
             echo TGetJSON::getJSON("r", $e->getMessage());
-            //echo json_encode($e);
         }
     }
 }

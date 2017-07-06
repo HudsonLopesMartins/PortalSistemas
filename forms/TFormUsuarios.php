@@ -226,10 +226,13 @@ class TFormUsuarios extends TPage implements iPage {
         $panelDetalhesUsuario->addItem("<input type='hidden' id='hdLat'>");
         $panelDetalhesUsuario->addItem("<input type='hidden' id='hdLng'>");
         $panelDetalhesUsuario->addItem("<input type='hidden' id='hdIBGE'>");
+        $panelDetalhesUsuario->addItem("<input type='hidden' id='hdFormState' value='i'>"); //i: Insert; e: Edit
         
         $btnSalvarDetalhes  = new TBootstrapButton("btnSalvarDetalhes", "Salvar Alterações", "btn-primary");
         $btnFecharDetalhes  = new TBootstrapButton("btnFecharDetalhes", "Fechar");
         $btnAlterarDetalhes = new TBootstrapButton("btnAlterarDetalhes", "Alterar Registro");
+        //$btnTeste           = new TBootstrapButton("btnTeste", "Teste");
+        //$btnFecharJanela    = new TBootstrapButton("btnFecharJanela", "Fechar Janela");
 
         $btnSalvarDetalhes->addImage("glyphicon-floppy-save");
         $btnFecharDetalhes->addImage("glyphicon-off");
@@ -240,6 +243,8 @@ class TFormUsuarios extends TPage implements iPage {
         $ftPanelDetalhes->addItem($btnFecharDetalhes);
         $ftPanelDetalhes->addItem("&nbsp;&nbsp;|&nbsp;&nbsp;");
         $ftPanelDetalhes->addItem($btnAlterarDetalhes);
+        //$ftPanelDetalhes->addItem($btnTeste);
+        //$ftPanelDetalhes->addItem($btnFecharJanela);
         
 
         $panelDetalhesUsuario->setFooter($ftPanelDetalhes);
@@ -256,6 +261,67 @@ class TFormUsuarios extends TPage implements iPage {
                                        "    </div>" .
                                        "</div>");
         */
+        
+        /**
+         * Form Cadastro/Edição de Login e Senha
+         */
+        $ddlGrupoLogin  = new TBootstrapSelect("ddlGrupoLogin", false, "form-control");
+        $edtEmailLogin  = new TBootstrapEdit("edtEmailLogin", $ttEdit->get()->email, "Email", "form-control");
+        $edtSenhaAntiga = new TBootstrapEdit("edtSenhaAntiga", $ttEdit->get()->password, "Senha Antiga", "form-control");
+        $edtNovaSenha   = new TBootstrapEdit("edtNovaSenha", $ttEdit->get()->password, "Nova Senha", "form-control");
+        $edtCheckSenha  = new TBootstrapEdit("edtCheckSenha", $ttEdit->get()->password, "Confirme a Senha", "form-control");
+        
+        $itemGrupoLogin = new TBootstrapGridCell();
+        $itemGrupoLogin->setWidth("col-md-12");
+        $itemGrupoLogin->addItem($ddlGrupoLogin);
+        
+        $itemEmailLogin = new TBootstrapGridCell();
+        $itemEmailLogin->setWidth("col-md-12");
+        $itemEmailLogin->addItem($edtEmailLogin);
+        
+        $itemSenhaAntiga = new TBootstrapGridCell();
+        $itemSenhaAntiga->setWidth("col-md-12");
+        $itemSenhaAntiga->addItem($edtSenhaAntiga);
+        
+        $itemSenhaNova = new TBootstrapGridCell();
+        $itemSenhaNova->setWidth("col-md-12");
+        $itemSenhaNova->addItem($edtNovaSenha);
+        
+        $itemCheckSenha = new TBootstrapGridCell();
+        $itemCheckSenha->setWidth("col-md-12");
+        $itemCheckSenha->addItem($edtCheckSenha);
+        
+        $itemDlgStatusLogin = new TBootstrapGridCell();
+        $itemDlgStatusLogin->setWidth("col-md-12");
+        $itemDlgStatusLogin->addItem("<div id='dlgStatusLogin' class='alert alert-success' role='alert'>" . 
+                                     "<i class='fa fa-spinner fa-pulse fa-1x fa-fw'></i>" .
+                                     "<strong>Aguarde</strong>, carregando dados do registro selecionado...</div>");
+        
+        $formNovoLogin = new TBootstrapGrid();
+        $formNovoLogin->addItem($itemDlgStatusLogin);
+        $formNovoLogin->addItem($itemGrupoLogin);
+        $formNovoLogin->addItem($itemLnHorizontal);
+        $formNovoLogin->addItem($itemEmailLogin);
+        $formNovoLogin->addItem($itemSenhaAntiga);
+        $formNovoLogin->addItem($itemSenhaNova);
+        $formNovoLogin->addItem($itemCheckSenha);
+        
+        $panelLoginUsuario = new TBootstrapPanel();
+        $panelLoginUsuario->setTitle("Dados Login", TRUE);
+        $panelLoginUsuario->addItem($formNovoLogin);
+        
+        $btnSalvarLoginUsuario  = new TBootstrapButton("btnSalvarLoginUsuario", "Salvar", "btn-primary");
+        $btnFecharLoginUsuario  = new TBootstrapButton("btnFecharLoginUsuario", "Fechar");
+        
+        $btnSalvarLoginUsuario->addImage("glyphicon-floppy-save");
+        $btnFecharLoginUsuario->addImage("glyphicon-off");
+
+        $ftPanelLoginUsuario = new TBootstrapPanelFooter();
+        $ftPanelLoginUsuario->addItem($btnSalvarLoginUsuario);
+        $ftPanelLoginUsuario->addItem($btnFecharLoginUsuario);
+       
+        $panelLoginUsuario->setFooter($ftPanelLoginUsuario);
+        
         /**
          * TabSheet
          */
@@ -263,6 +329,9 @@ class TFormUsuarios extends TPage implements iPage {
         $tbUsuarios->addPageItem($panelListaUsuarios, true);
         $tbUsuarios->addItem("<div class='row'><div class='col-md-10 col-md-offset-1'>" . 
                              $panelDetalhesUsuario->show() . 
+                             "</div></div>");
+        $tbUsuarios->addItem("<div class='row'><div class='col-md-6 col-md-offset-3'>" . 
+                             $panelLoginUsuario->show() . 
                              "</div></div>");
         
         //$this->addItem($tbUsuarios->show());
